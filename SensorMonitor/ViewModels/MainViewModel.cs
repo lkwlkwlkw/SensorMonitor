@@ -4,8 +4,6 @@ using OxyPlot.Legends;
 using OxyPlot.Series;
 using SensorMonitor.Services;
 
-using System.Diagnostics;
-
 
 namespace SensorMonitor.ViewModels
 {
@@ -20,26 +18,11 @@ namespace SensorMonitor.ViewModels
            
             _dataBaseService = Data; // Iniekcja zależności usługi bazy danych
             _dataBaseService.CreateFile(); // Tworzenie pliku bazy danych
-           
 
-            this.MyModel = new PlotModel
-            {
-                Title = "Temperatury",
-                IsLegendVisible = true,
-                Legends = { new Legend { LegendPosition = LegendPosition.TopRight } }
-            };
-
-            this.MyModel.Axes.Add(new DateTimeAxis
-            {
-                Position = AxisPosition.Bottom,
-                StringFormat = "dd.MM HH:mm"
-            });
-            this.MyModel.Axes.Add(new LinearAxis
-            {
-                Position = AxisPosition.Left,
-                Title = "Wartość"
-            });
-
+            InitializePressurePlot();
+            InitializeTemeraturePlot();
+            InitializeWeightPlot();
+            
             InitializeTemperatureSeries();
 
             _plcService = _PLCConnectionService; // Iniekcja zależności usługi PLC
@@ -60,9 +43,76 @@ namespace SensorMonitor.ViewModels
                     );
                 }
                 
-                this.MyModel.Series.Add(_TemperatureSeries[seriesIndex]);
+                this.TemperatureModel.Series.Add(_TemperatureSeries[seriesIndex]);
             }
         }
+
+        private void InitializeTemeraturePlot()
+        {
+            this.TemperatureModel = new PlotModel
+            {
+               // Title = "Temperatury",
+                IsLegendVisible = true,
+                Legends = { new Legend { LegendPosition = LegendPosition.TopRight } }
+            };
+
+            this.TemperatureModel.Axes.Add(new DateTimeAxis
+            {
+                Position = AxisPosition.Bottom,
+                StringFormat = "dd.MM HH:mm"
+            });
+            this.TemperatureModel.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Wartość"
+            });
+        }
+
+
+        private void InitializePressurePlot()
+        {
+            this.PressureModel = new PlotModel
+            {
+              //  Title = "Temperatury",
+                IsLegendVisible = true,
+                Legends = { new Legend { LegendPosition = LegendPosition.TopRight } }
+            };
+
+            this.PressureModel.Axes.Add(new DateTimeAxis
+            {
+                Position = AxisPosition.Bottom,
+                StringFormat = "dd.MM HH:mm"
+            });
+            this.PressureModel.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Wartość"
+            });
+        }
+
+        private void InitializeWeightPlot()
+        {
+            this.WeightModel = new PlotModel
+            {
+                //  Title = "Temperatury",
+                IsLegendVisible = true,
+                Legends = { new Legend { LegendPosition = LegendPosition.TopRight } }
+            };
+
+            this.WeightModel.Axes.Add(new DateTimeAxis
+            {
+                Position = AxisPosition.Bottom,
+                StringFormat = "dd.MM HH:mm"
+            });
+            this.WeightModel.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Wartość"
+            });
+        }
+
+
+
 
         private void PlcService_OnDataReceived()
         {             
@@ -76,7 +126,7 @@ namespace SensorMonitor.ViewModels
                     ));
             }
 
-            this.MyModel.InvalidatePlot(true);
+            this.TemperatureModel.InvalidatePlot(true);
 
 
 
@@ -101,8 +151,9 @@ namespace SensorMonitor.ViewModels
 
         }
 
-        public PlotModel MyModel { get; private set; }
-
+        public PlotModel TemperatureModel { get; private set; }
+        public PlotModel PressureModel { get; private set; }
+        public PlotModel WeightModel { get; private set; }
 
     }
 }

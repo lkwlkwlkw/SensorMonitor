@@ -28,8 +28,9 @@ namespace SensorMonitor.Services
             public double Temperatura9 { get; set; }
             public double Temperatura10 { get; set; }
             public double Temperatura11 { get; set; }
-            public double Temperatura12 { get; set; }
-            
+            public double Pressure0 { get; set; }
+            public double Pressure1 { get; set; }
+            public double Weight { get; set; }
         }
 
         public void CreateFile()

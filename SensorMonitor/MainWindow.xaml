@@ -4,10 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:oxy="http://oxyplot.org/wpf"
-    Title="DI WPF"
+    xmlns:materialIcons="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
+    Title="Sensor Monitor"
     Width="1280"
     Height="720"
-    ui:WindowHelper.UseModernWindowStyle="True">
+    ui:WindowHelper.UseModernWindowStyle="True"
+    >
 
     <Window.Resources>
         <Style x:Key="HeaderTextBlockStyle" TargetType="TextBlock">
@@ -34,7 +36,7 @@
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <ui:SymbolIcon Symbol="Home" Width="16" Height="16"/>
+                        <materialIcons:MaterialIcon Kind="Home"  Animation="Spin"  />
                         <TextBlock Text="Start" Margin="6,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
@@ -50,43 +52,31 @@
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <ui:SymbolIcon Symbol="ZeroBars" Width="16" Height="16"/>
+                        <materialIcons:MaterialIcon Kind="Thermometer"  Animation="Spin"  />
                         <TextBlock Text="Temperatura" Margin="6,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
-                <oxy:PlotView Model="{Binding MyModel}"/>
+                <oxy:PlotView Model="{Binding TemperatureModel}"/>
             </TabItem>
 
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <ui:SymbolIcon Symbol="Document" Width="16" Height="16"/>
-                        <TextBlock Text="Dokumenty" Margin="6,0,0,0"/>
+                        <materialIcons:MaterialIcon Kind="Scale"  Animation="Spin"  />
+                        <TextBlock Text="Waga" Margin="6,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
-                <DockPanel>
-                    <TextBlock Text="Ekran startowy" Margin="20"/>
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="32"
-                        Text="{Binding Temp1}" />
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="32"
-                        Text="{Binding CurrentTime}" />
-                </DockPanel>
+                <oxy:PlotView Model="{Binding WeightModel}"/>
             </TabItem>
 
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <ui:SymbolIcon Symbol="Setting" Width="16" Height="16"/>
-                        <TextBlock Text="Ustawienia" Margin="6,0,0,0"/>
+                        <materialIcons:MaterialIcon Kind="Water"  Animation="Spin"  />
+                        <TextBlock Text="Ciśnienie" Margin="6,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
-                <TextBlock Margin="20" Text="Ustawienia aplikacji"/>
+                <oxy:PlotView Model="{Binding PressureModel}"/>
             </TabItem>
         </TabControl>
     </DockPanel>

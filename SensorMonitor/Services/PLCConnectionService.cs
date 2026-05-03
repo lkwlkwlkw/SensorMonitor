@@ -14,6 +14,11 @@ namespace SensorMonitor.Services
         private Double[] _Temperature  = new Double[12];
         public Double[] Temperature { get => _Temperature; }
 
+        private Double[] _Pressure = new Double[2];
+        public Double[] Pressure { get => _Pressure; }
+
+        private Double _Weight;
+        public Double Weight { get => _Weight; }
 
         private async Task Connect()
         {
@@ -105,10 +110,28 @@ namespace SensorMonitor.Services
                     },
 
                     new ReadValueId {
+                        NodeId = NodeId.Parse("ns=3;i=1018"),
+                        AttributeId = AttributeIds.Value
+                    },
+                    
+
+
+                    
+                     new ReadValueId {
                         NodeId = NodeId.Parse("ns=3;i=1019"),
                         AttributeId = AttributeIds.Value
                     },
+                     
+                      new ReadValueId {
+                        NodeId = NodeId.Parse("ns=3;i=1020"),
+                        AttributeId = AttributeIds.Value
+                    },
 
+                       new ReadValueId {
+                        NodeId = NodeId.Parse("ns=3;i=1021"),
+                        AttributeId = AttributeIds.Value
+                    },
+                    
                 }
             };
 
@@ -119,10 +142,14 @@ namespace SensorMonitor.Services
                     var readResult = await channel!.ReadAsync(readRequest);
                     
 
-                    for (int i = 0; i < readResult.Results.Length; i++)
+                    for (int i = 0; i < 12; i++)
                     {
                         _Temperature[i] = (Double)readResult.Results[i].Value;
                     }
+
+                    _Pressure[0] = (Double)readResult.Results[12].Value;
+                    _Pressure[1] = (Double)readResult.Results[13].Value;
+                    _Weight = (Double)readResult.Results[14].Value;
 
                     OnDataReceived?.Invoke();
                       
