@@ -1,0 +1,95 @@
+﻿<Window
+    x:Class="SensorMonitor.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:oxy="http://oxyplot.org/wpf"
+    Title="DI WPF"
+    Width="1280"
+    Height="720"
+    ui:WindowHelper.UseModernWindowStyle="True">
+
+    <Window.Resources>
+        <Style x:Key="HeaderTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <Style x:Key="AccentButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#FF007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="8,4"/>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True">
+        <StatusBar DockPanel.Dock="Bottom" Height="24">
+            <StatusBarItem>
+                <TextBlock Text="Gotowy"/>
+            </StatusBarItem>
+        </StatusBar>
+
+        <TabControl>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Home" Width="16" Height="16"/>
+                        <TextBlock Text="Start" Margin="6,0,0,0"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <DockPanel>
+                    <ui:SimpleStackPanel Margin="12" Spacing="24">
+                        <TextBlock Text="My first ModernWPF app" Style="{StaticResource HeaderTextBlockStyle}" />
+                        <Button Content="I am a button" />
+                        <Button Content="I am an accent button" Style="{StaticResource AccentButtonStyle}" />
+                    </ui:SimpleStackPanel>
+                </DockPanel>
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="ZeroBars" Width="16" Height="16"/>
+                        <TextBlock Text="Temperatura" Margin="6,0,0,0"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <oxy:PlotView Model="{Binding MyModel}"/>
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Document" Width="16" Height="16"/>
+                        <TextBlock Text="Dokumenty" Margin="6,0,0,0"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <DockPanel>
+                    <TextBlock Text="Ekran startowy" Margin="20"/>
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="32"
+                        Text="{Binding Temp1}" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="32"
+                        Text="{Binding CurrentTime}" />
+                </DockPanel>
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Setting" Width="16" Height="16"/>
+                        <TextBlock Text="Ustawienia" Margin="6,0,0,0"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TextBlock Margin="20" Text="Ustawienia aplikacji"/>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+
+</Window>
+
