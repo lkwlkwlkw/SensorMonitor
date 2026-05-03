@@ -71,7 +71,9 @@ namespace SensorMonitor.ViewModels
                 _TemperatureSeries[i].Points.Add(new DataPoint(
                     DateTimeAxis.ToDouble(DateTime.Now),
                     _plcService.Temperature[i]
-                ));
+                    
+                    
+                    ));
             }
 
             this.MyModel.InvalidatePlot(true);
@@ -81,18 +83,18 @@ namespace SensorMonitor.ViewModels
             _dataBaseService.SavePomiar(new DataBaseService.Pomiar
             {
                 Data = DateTime.Now,
-                Temperatura0 = 25.5,
-                Temperatura1 = 26.0,
-                Temperatura2 = 24.8,
-                Temperatura3 = 27.1,
-                Temperatura4 = 23.9,
-                Temperatura5 = 22.5,
-                Temperatura6 = 28.3,
-                Temperatura7 = 24.2,
-                Temperatura8 = 26.7,
-                Temperatura9 = 25.0,
-                Temperatura10 = 27.5,
-                Temperatura11 = 24.6
+                Temperatura0 = _plcService.Temperature[0],
+                Temperatura1 = _plcService.Temperature[1],
+                Temperatura2 = _plcService.Temperature[2],
+                Temperatura3 = _plcService.Temperature[3],
+                Temperatura4 = _plcService.Temperature[4],
+                Temperatura5 = _plcService.Temperature[5],
+                Temperatura6 = _plcService.Temperature[6],
+                Temperatura7 = _plcService.Temperature[7],
+                Temperatura8 = _plcService.Temperature[8],
+                Temperatura9 = _plcService.Temperature[9],
+                Temperatura10 = _plcService.Temperature[10],
+                Temperatura11 = _plcService.Temperature[11]
             }); // Przykładowe zapisanie pomiaru do bazy danych
 
 
