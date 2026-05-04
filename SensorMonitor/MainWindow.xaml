@@ -2,33 +2,32 @@
     x:Class="SensorMonitor.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:oxy="http://oxyplot.org/wpf"
     xmlns:materialIcons="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
+    xmlns:oxy="http://oxyplot.org/wpf"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="Sensor Monitor"
     Width="1280"
     Height="720"
-    ui:WindowHelper.UseModernWindowStyle="True"
-    >
+    ui:WindowHelper.UseModernWindowStyle="True">
 
     <Window.Resources>
         <Style x:Key="HeaderTextBlockStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Margin" Value="0,0,0,8" />
         </Style>
 
         <Style x:Key="AccentButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#FF007ACC"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Background" Value="#FF007ACC" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Padding" Value="8,4" />
         </Style>
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
-        <StatusBar DockPanel.Dock="Bottom" Height="24">
+        <StatusBar Height="24" DockPanel.Dock="Bottom">
             <StatusBarItem>
-                <TextBlock Text="Gotowy"/>
+                <TextBlock Text="Gotowy" />
             </StatusBarItem>
         </StatusBar>
 
@@ -36,47 +35,97 @@
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <materialIcons:MaterialIcon Kind="Home"  Animation="Spin"  />
-                        <TextBlock Text="Start" Margin="6,0,0,0"/>
+                        <materialIcons:MaterialIcon
+                            Height="20"
+                            Animation="Spin"
+                            Foreground="DarkGreen"
+                            Kind="Home" />
+                        <TextBlock Margin="6,0,0,0" Text="Start" />
                     </StackPanel>
                 </TabItem.Header>
                 <DockPanel>
-                    <ui:SimpleStackPanel Margin="12" Spacing="24">
-                        <TextBlock Text="My first ModernWPF app" Style="{StaticResource HeaderTextBlockStyle}" />
-                        <Button Content="I am a button" />
-                        <Button Content="I am an accent button" Style="{StaticResource AccentButtonStyle}" />
+                    <ui:SimpleStackPanel
+                        Height="60"
+                        DockPanel.Dock="Bottom"
+                        Orientation="Horizontal">
+
+                        <Button
+                            Width="120"
+                            Height="40"
+                            Margin="20,0,0,0"
+                            Background="LightGreen"
+                            Content="Start" 
+                            Command="{Binding ClickStartCommand}"/>
+                        <Button
+                            Width="120"
+                            Height="40"
+                            Margin="20,0,0,0"
+                            Background="PaleVioletRed"
+                            Content="Stop"
+                            Command="{Binding ClickStopCommand}"/>
+                        <TextBlock
+                            Margin="20,0,0,0"
+                            VerticalAlignment="Center"
+                            Text="Czas cyklu:" />
+                        <TextBlock
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            Text="{Binding CycleTimeText}" />
                     </ui:SimpleStackPanel>
+
+                    <Canvas Background="#EEE">
+                        <!--  przykładowe elementy  -->
+                        <Ellipse
+                            Canvas.Left="50"
+                            Canvas.Top="50"
+                            Width="40"
+                            Height="40"
+                            Fill="Red" />
+                    </Canvas>
+
                 </DockPanel>
             </TabItem>
 
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <materialIcons:MaterialIcon Kind="Thermometer"  Animation="Spin"  />
-                        <TextBlock Text="Temperatura" Margin="6,0,0,0"/>
+                        <materialIcons:MaterialIcon
+                            Height="20"
+                            Animation="Spin"
+                            Foreground="Blue"
+                            Kind="Thermometer" />
+                        <TextBlock Margin="6,0,0,0" Text="Temperatura" />
                     </StackPanel>
                 </TabItem.Header>
-                <oxy:PlotView Model="{Binding TemperatureModel}"/>
+                <oxy:PlotView Model="{Binding TemperatureModel}" />
             </TabItem>
 
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <materialIcons:MaterialIcon Kind="Scale"  Animation="Spin"  />
-                        <TextBlock Text="Waga" Margin="6,0,0,0"/>
+                        <materialIcons:MaterialIcon
+                            Height="20"
+                            Animation="Spin"
+                            Foreground="Gold"
+                            Kind="Scale" />
+                        <TextBlock Margin="6,0,0,0" Text="Waga" />
                     </StackPanel>
                 </TabItem.Header>
-                <oxy:PlotView Model="{Binding WeightModel}"/>
+                <oxy:PlotView Model="{Binding WeightModel}" />
             </TabItem>
 
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <materialIcons:MaterialIcon Kind="Water"  Animation="Spin"  />
-                        <TextBlock Text="Ciśnienie" Margin="6,0,0,0"/>
+                        <materialIcons:MaterialIcon
+                            Height="20"
+                            Animation="Spin"
+                            Foreground="Red"
+                            Kind="Water" />
+                        <TextBlock Margin="6,0,0,0" Text="Ciśnienie" />
                     </StackPanel>
                 </TabItem.Header>
-                <oxy:PlotView Model="{Binding PressureModel}"/>
+                <oxy:PlotView Model="{Binding PressureModel}" />
             </TabItem>
         </TabControl>
     </DockPanel>

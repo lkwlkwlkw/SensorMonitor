@@ -20,10 +20,10 @@ namespace SensorMonitor
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(MainViewModel vm)
+        public MainWindow(MainViewModel _ViewModel)
         {
             InitializeComponent();
-            DataContext = vm;
+            DataContext = _ViewModel;
         }
 
     }

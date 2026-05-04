@@ -3,19 +3,54 @@ using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
 using SensorMonitor.Services;
-
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace SensorMonitor.ViewModels
 {
-    public class MainViewModel
+    public class MainViewModel : INotifyPropertyChanged
     {
         private readonly PLCConnectionService _plcService;
         private readonly DataBaseService _dataBaseService;
         private LineSeries[] _TemperatureSeries = new LineSeries[12]; // Tablica serii dla 12 temperatur
 
+        public ICommand ClickStartCommand { get; }
+        public ICommand ClickStopCommand { get; }
+        private string _CycleTimeText="00:00:00";
+        private Stopwatch _stopwatch = new Stopwatch();
+        private DispatcherTimer _timer = new DispatcherTimer();
+        private DateTime _startTime;
+
+
+        public string CycleTimeText
+        {
+            get
+            {
+                Debug.WriteLine("get");
+                return _CycleTimeText;
+
+            }
+            set
+            {
+                Debug.WriteLine(_CycleTimeText);
+                _CycleTimeText = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+
+
+
         public MainViewModel(PLCConnectionService _PLCConnectionService, DataBaseService Data)
         {
-           
+            ClickStartCommand = new RelayCommand(OnStartClick);
+            ClickStopCommand = new RelayCommand(OnStopClick);
+
             _dataBaseService = Data; // Iniekcja zależności usługi bazy danych
             _dataBaseService.CreateFile(); // Tworzenie pliku bazy danych
 
@@ -27,6 +62,23 @@ namespace SensorMonitor.ViewModels
 
             _plcService = _PLCConnectionService; // Iniekcja zależności usługi PLC
             _plcService.OnDataReceived += PlcService_OnDataReceived; // Subskrypcja na zdarzenie otrzymania danych
+
+
+
+
+
+           
+
+
+
+
+
+
+
+
+
+
+
         }
 
         private void InitializeTemperatureSeries()
@@ -154,6 +206,48 @@ namespace SensorMonitor.ViewModels
         public PlotModel TemperatureModel { get; private set; }
         public PlotModel PressureModel { get; private set; }
         public PlotModel WeightModel { get; private set; }
+
+
+
+
+        private void OnStartClick(object? parameter)
+        {
+           
+         //   _stopwatch.Restart();
+
+            _startTime = DateTime.Now;
+
+           // _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromSeconds(1);
+            _timer.Tick += (s, e) =>
+            {
+               TimeSpan _CycleTime = DateTime.Now - _startTime;
+                CycleTimeText = _CycleTime.ToString(@"hh\:mm\:ss");
+            };
+            _timer.Start();
+
+
+
+        }
+
+        private void OnStopClick(object? parameter)
+        {
+            // Logika po kliknięciu
+          //  Debug.WriteLine("Kliknięto przycisk stop");
+          //  _stopwatch.Stop();
+
+            _timer.Stop();
+
+
+        }
+
+
+       
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string name = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
 
     }
 }
