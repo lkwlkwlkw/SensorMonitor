@@ -8,7 +8,9 @@
     Title="Sensor Monitor"
     Width="1280"
     Height="720"
-    ui:WindowHelper.UseModernWindowStyle="True">
+    ui:WindowHelper.UseModernWindowStyle="True"
+    WindowState="Maximized"
+    >
 
     <Window.Resources>
         <Style x:Key="HeaderTextBlockStyle" TargetType="TextBlock">
@@ -55,14 +57,16 @@
                             Margin="20,0,0,0"
                             Background="LightGreen"
                             Content="Start" 
-                            Command="{Binding ClickStartCommand}"/>
+                            Command="{Binding ClickStartCommand}"
+                            IsEnabled="{Binding StartButtonEnabled}"/>
                         <Button
                             Width="120"
                             Height="40"
                             Margin="20,0,0,0"
                             Background="PaleVioletRed"
                             Content="Stop"
-                            Command="{Binding ClickStopCommand}"/>
+                            Command="{Binding ClickStopCommand}"
+                            IsEnabled="{Binding StopButtonEnabled}"/>
                         <TextBlock
                             Margin="20,0,0,0"
                             VerticalAlignment="Center"
@@ -70,17 +74,79 @@
                         <TextBlock
                             Margin="10,0,0,0"
                             VerticalAlignment="Center"
-                            Text="{Binding CycleTimeText}" />
+                            Text="{Binding CycleDurationText}" />
+                        <TextBlock HorizontalAlignment="Center" Height="60" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center" Width="58"/>
                     </ui:SimpleStackPanel>
 
                     <Canvas Background="#EEE">
-                        <!--  przykładowe elementy  -->
-                        <Ellipse
-                            Canvas.Left="50"
-                            Canvas.Top="50"
-                            Width="40"
-                            Height="40"
-                            Fill="Red" />
+                        <Image Height="269" Canvas.Left="243" Canvas.Top="163" Width="781" Source="/Images/S7ExpertLogo.png"/>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="100" Canvas.Top="116"  HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <TextBlock Text="T1" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[0]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="150" Canvas.Top="100" >
+                            <TextBlock Text="T2" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[1]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="200" Canvas.Top="100" >
+                            <TextBlock Text="T3" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[2]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="250" Canvas.Top="100" >
+                            <TextBlock Text="T4" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[3]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="300" Canvas.Top="100" >
+                            <TextBlock Text="T5" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[4]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="350" Canvas.Top="100" >
+                            <TextBlock Text="T6" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[5]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="400" Canvas.Top="100" >
+                            <TextBlock Text="T7" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[6]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="400" Canvas.Top="100" >
+                            <TextBlock Text="T7" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[6]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="400" Canvas.Top="100" >
+                            <TextBlock Text="T8" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[7]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="450" Canvas.Top="100" >
+                            <TextBlock Text="T9" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[8]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="500" Canvas.Top="100" >
+                            <TextBlock Text="T10" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[9]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="550" Canvas.Top="100" >
+                            <TextBlock Text="T11" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[10]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="600" Canvas.Top="100" >
+                            <TextBlock Text="T12" Background="LightGray"/>
+                            <TextBlock Text="{Binding Temperature[11]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
                     </Canvas>
 
                 </DockPanel>

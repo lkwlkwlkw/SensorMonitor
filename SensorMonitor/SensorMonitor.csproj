@@ -6,7 +6,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Fasticon-Comic-Iphone-Graph.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\S7ExpertLogo.png" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="JsonFlatFileDataStore" Version="2.4.2" />
@@ -24,6 +29,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\S7ExpertLogo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
@@ -32,6 +43,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Fasticon-Comic-Iphone-Graph.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

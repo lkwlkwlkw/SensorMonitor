@@ -9,15 +9,15 @@
                 <ui:ThemeResources />
                 <ui:XamlControlsResources />
 
-               
+
 
             </ResourceDictionary.MergedDictionaries>
 
 
-            
 
 
-            
+
+
 
         </ResourceDictionary>
     </Application.Resources>

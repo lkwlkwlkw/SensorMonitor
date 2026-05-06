@@ -2,19 +2,11 @@
 using Microsoft.Extensions.Hosting;
 using SensorMonitor.Services;
 using SensorMonitor.ViewModels;
-using System.Configuration;
-using System.Data;
-using System.Net;
 using System.Windows;
 using Workstation.ServiceModel.Ua;
-using Workstation.ServiceModel.Ua;
-using Workstation.ServiceModel.Ua.Channels;
 
 namespace SensorMonitor
-{
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
+{    
 
     public partial class App : Application
     {
@@ -27,9 +19,7 @@ namespace SensorMonitor
             // Budowa hosta DI
             Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
                 .ConfigureServices(services =>
-                {
-                   
-
+                {  
                     // ViewModel
                     services.AddTransient<MainViewModel>();
 
@@ -45,19 +35,12 @@ namespace SensorMonitor
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
-
-
-           
-
-
+            base.OnStartup(e);      
             var mainWindow = Host!.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
-
-            var plcService = Host!.Services.GetRequiredService<PLCConnectionService>();
-           
+            var plcService = Host!.Services.GetRequiredService<PLCConnectionService>();           
             plcService.ConnectPLC();
-          //  plcService.StartReadingData();
+          
         }
 
         protected override async void OnExit(ExitEventArgs e)
