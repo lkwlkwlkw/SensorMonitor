@@ -45,6 +45,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Fasticon-Comic-Iphone-Graph.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

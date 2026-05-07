@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ModernWpf.Controls;
 using SensorMonitor.Services;
@@ -18,9 +19,18 @@ namespace SensorMonitor
         public App()
         {
             // Budowa hosta DI
-            Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
-                .ConfigureServices(services =>
-                {  
+            Host = Microsoft.Extensions.Hosting.Host
+                .CreateDefaultBuilder()
+                .ConfigureAppConfiguration(config =>
+                {
+                    config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                })
+                .ConfigureServices((context, services) =>
+                {
+                    // Wczytanie sekcji AppSettings
+                    services.Configure<AppSettings>(
+                        context.Configuration.GetSection("AppSettings"));
+
                     // ViewModel
                     services.AddTransient<MainViewModel>();
 

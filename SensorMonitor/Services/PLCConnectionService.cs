@@ -1,24 +1,39 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Extensions.Options;
+using System.Diagnostics;
+using System.Windows;
 using Workstation.ServiceModel.Ua;
 using Workstation.ServiceModel.Ua.Channels;
 
 namespace SensorMonitor.Services
 {
     public class PLCConnectionService
-    {       
+    {
+        private readonly AppSettings _settings;
+
+
         private ApplicationDescription? clientDescription;
         private ClientSessionChannel? channel;
         public event Action? OnDataReceived;
 
         
-        private Double[] _Temperature  = new Double[12];
-        public Double[] Temperature { get => _Temperature; }
+        private float[] _Temperature  = new float[12];
+        public float[] Temperature { get => _Temperature; }
 
-        private Double[] _Pressure = new Double[2];
-        public Double[] Pressure { get => _Pressure; }
+        private float[] _Pressure = new float[2];
+        public float[] Pressure { get => _Pressure; }
 
-        private Double _Weight;
-        public Double Weight { get => _Weight; }
+        private float _Weight;
+        public float Weight { get => _Weight; }
+
+
+
+        public PLCConnectionService(IOptionsMonitor<AppSettings> options)
+        {
+            _settings = options.CurrentValue;
+            
+          //  MessageBox.Show($"Refresh PLC interval: {_settings.NodeIds.T1}");
+          //  MessageBox.Show($"Save to DB interval: {_settings.SaveToDBInterval}");
+        }
 
         private async Task Connect()
         {
@@ -33,7 +48,7 @@ namespace SensorMonitor.Services
                 clientDescription,
                 null,
                 new AnonymousIdentity(),
-                "opc.tcp://Precision7530:53530/OPCUA/SimulationServer",
+                _settings.ConnectionAddress,
                 SecurityPolicyUris.None);
 
             try
@@ -61,56 +76,56 @@ namespace SensorMonitor.Services
             {
                 NodesToRead = new[] {
                     new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1007"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.T1),
                         AttributeId = AttributeIds.Value
                     },
                     new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1008"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.T2),
                         AttributeId = AttributeIds.Value
                     },
                     new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1009"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.T3),
                         AttributeId = AttributeIds.Value
                     },
                     new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1010"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.T4),
                         AttributeId = AttributeIds.Value
                     },
                     new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1011"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.T5),
                         AttributeId = AttributeIds.Value
                     },
                     new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1012"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.T6),
                         AttributeId = AttributeIds.Value
                     },
                     new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1013"),
-                        AttributeId = AttributeIds.Value
-                    },
-
-                    new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1014"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.T7),
                         AttributeId = AttributeIds.Value
                     },
 
                     new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1015"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.T8),
                         AttributeId = AttributeIds.Value
                     },
 
                     new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1016"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.T9),
                         AttributeId = AttributeIds.Value
                     },
 
                     new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1017"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.T10),
                         AttributeId = AttributeIds.Value
                     },
 
                     new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1018"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.T11),
+                        AttributeId = AttributeIds.Value
+                    },
+
+                    new ReadValueId {
+                        NodeId = NodeId.Parse(_settings.NodeIds.T12),
                         AttributeId = AttributeIds.Value
                     },
                     
@@ -118,17 +133,17 @@ namespace SensorMonitor.Services
 
                     
                      new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1019"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.P1),
                         AttributeId = AttributeIds.Value
                     },
                      
                       new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1020"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.P2),
                         AttributeId = AttributeIds.Value
                     },
 
                        new ReadValueId {
-                        NodeId = NodeId.Parse("ns=3;i=1021"),
+                        NodeId = NodeId.Parse(_settings.NodeIds.W1),
                         AttributeId = AttributeIds.Value
                     },
                     
@@ -144,19 +159,18 @@ namespace SensorMonitor.Services
 
                     for (int i = 0; i < 12; i++)
                     {
-                        _Temperature[i] = (Double)readResult.Results[i].Value;
+                        _Temperature[i] = (float)(readResult.Results[i].Value ?? 0.0);
                     }
 
-                    _Pressure[0] = (Double)readResult.Results[12].Value;
-                    _Pressure[1] = (Double)readResult.Results[13].Value;
-                    _Weight = (Double)readResult.Results[14].Value;
+                    _Pressure[0] = (float)(readResult.Results[12].Value ?? 0.0) ;
+                    _Pressure[1] = (float)(readResult.Results[13].Value ?? 0.0) ;
+                    _Weight = (float)(readResult.Results[14].Value ?? 0.0) ;
 
-                    OnDataReceived?.Invoke();
-                      
+                    OnDataReceived?.Invoke();                    
 
-                    Debug.WriteLine("aaaa" + _Temperature[0].ToString());
+                   
 
-                    await Task.Delay(1000);
+                    await Task.Delay(_settings.PLCPollingInterval*1000);// Opóźnienie między kolejnymi odczytami danych z PLC
                 }
                 catch (Exception ex)
                 {

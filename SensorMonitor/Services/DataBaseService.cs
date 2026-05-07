@@ -12,21 +12,21 @@ namespace SensorMonitor.Services
         public class Pomiar
         {
             public DateTime Data { get; set; }
-            public double Temperatura0 { get; set; }
-            public double Temperatura1 { get; set; }
-            public double Temperatura2 { get; set; }
-            public double Temperatura3 { get; set; }
-            public double Temperatura4 { get; set; }
-            public double Temperatura5 { get; set; }
-            public double Temperatura6 { get; set; }
-            public double Temperatura7 { get; set; }
-            public double Temperatura8 { get; set; }
-            public double Temperatura9 { get; set; }
-            public double Temperatura10 { get; set; }
-            public double Temperatura11 { get; set; }
-            public double Pressure0 { get; set; }
-            public double Pressure1 { get; set; }
-            public double Weight { get; set; }
+            public float Temperatura0 { get; set; }
+            public float Temperatura1 { get; set; }
+            public float Temperatura2 { get; set; }
+            public float Temperatura3 { get; set; }
+            public float Temperatura4 { get; set; }
+            public float Temperatura5 { get; set; }
+            public float Temperatura6 { get; set; }
+            public float Temperatura7 { get; set; }
+            public float Temperatura8 { get; set; }
+            public float Temperatura9 { get; set; }
+            public float Temperatura10 { get; set; }
+            public float Temperatura11 { get; set; }
+            public float Pressure0 { get; set; }
+            public float Pressure1 { get; set; }
+            public float Weight { get; set; }
         }
 
         public void CreateFile()

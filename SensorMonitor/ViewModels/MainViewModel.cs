@@ -140,7 +140,9 @@ namespace SensorMonitor.ViewModels
             this.TemperatureModel.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Left,
-                Title = "Wartość"
+                Title = "Temperatura [°C]",
+                Maximum = 180,
+                Minimum = 0
             });
         }
 
@@ -162,7 +164,9 @@ namespace SensorMonitor.ViewModels
             this.PressureModel.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Left,
-                Title = "Wartość"
+                Title = "Ciśnienie",
+                Maximum = 180,
+                Minimum = 0
             });
         }
 
@@ -183,7 +187,9 @@ namespace SensorMonitor.ViewModels
             this.WeightModel.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Left,
-                Title = "Wartość"
+                Title = "Waga",
+                Maximum = 180,
+                Minimum = 0
             });
         }
 
