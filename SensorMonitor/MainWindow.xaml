@@ -5,12 +5,20 @@
     xmlns:materialIcons="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
     xmlns:oxy="http://oxyplot.org/wpf"
     xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:ei="http://schemas.microsoft.com/xaml/behaviors"
     Title="Sensor Monitor"
     Width="1280"
     Height="720"
     ui:WindowHelper.UseModernWindowStyle="True"
     WindowState="Maximized"
     >
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnWindowClosing"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <Window.Resources>
         <Style x:Key="HeaderTextBlockStyle" TargetType="TextBlock">

@@ -10,6 +10,8 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System.IO;
+using ModernWpf.Controls;
+using System.Windows;
 
 namespace SensorMonitor.ViewModels
 {
@@ -70,6 +72,11 @@ namespace SensorMonitor.ViewModels
                 OnPropertyChanged();
             }
         }
+
+
+
+
+
 
 
 
@@ -248,17 +255,36 @@ StopButtonEnabled = true;
 
         }
 
-        private void OnStopClick(object? parameter)
+        private async void OnStopClick(object? parameter)
         {
-            StartButtonEnabled = true;
-            StopButtonEnabled = false;
+            var dialog = new ContentDialog
+            {
+                Title = "Zatrzymanie logowania",
+                Content = "Jesteś pewien?",
+                PrimaryButtonText = "Tak",
+                SecondaryButtonText = "Nie",
+                DefaultButton = ContentDialogButton.Secondary
+            };
 
-            if (!_DBWriteActive) return;
-            _DBWriteActive = false;
+            ContentDialogResult result = await dialog.ShowAsync();
 
-            _timer.Stop();
-            _dataBaseService.DatabaseClose(); // Zamknięcie bazy danych i przeniesienie pliku do folderu Raporty
+            if (result == ContentDialogResult.Primary)
+            {
+                StartButtonEnabled = true;
+                StopButtonEnabled = false;
 
+                if (!_DBWriteActive) return;
+                _DBWriteActive = false;
+
+                _timer.Stop();
+                _dataBaseService.DatabaseClose(); // Zamknięcie bazy danych i przeniesienie pliku do folderu Raporty
+
+            }
+
+
+           
+
+           
         }
 
 
@@ -275,6 +301,34 @@ StopButtonEnabled = true;
                 Temperature[i] = _plcConnectionService.Temperature[i].ToString("F1");
             }
         }
+
+        private bool _closingHandled = false;
+
+        public async void OnWindowClosing(object sender, CancelEventArgs e)
+        {
+            if (_closingHandled)
+                return;
+
+            e.Cancel = true; // zatrzymaj zamykanie
+
+            var dialog = new ContentDialog
+            {
+                Title = "Zamykanie",
+                Content = "Jesteś pewien?",
+                PrimaryButtonText = "Tak",
+                SecondaryButtonText = "Nie",
+                DefaultButton = ContentDialogButton.Secondary
+            };
+
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                _closingHandled = true;
+                (sender as Window).Close(); // zamknij ponownie
+            }
+        }
+
 
 
     }

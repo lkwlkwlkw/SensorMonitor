@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ModernWpf.Controls;
 using SensorMonitor.Services;
 using SensorMonitor.ViewModels;
 using System.Windows;
@@ -44,12 +45,16 @@ namespace SensorMonitor
         }
 
         protected override async void OnExit(ExitEventArgs e)
-        {
+        {        
+
             if (Host is not null)
                 await Host.StopAsync();
 
             var plcService = Host!.Services.GetService<PLCConnectionService>();
             plcService?.DisconnectPLC();
+
+            var DBService = Host!.Services.GetService<DataBaseService>();
+            DBService?.DatabaseClose();
 
             base.OnExit(e);
         }
