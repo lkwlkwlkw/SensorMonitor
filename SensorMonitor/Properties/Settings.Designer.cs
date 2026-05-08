@@ -22,41 +22,5 @@ namespace SensorMonitor.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
-        public int PLCPoolingTime {
-            get {
-                return ((int)(this["PLCPoolingTime"]));
-            }
-            set {
-                this["PLCPoolingTime"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("60")]
-        public int DBWriteTime {
-            get {
-                return ((int)(this["DBWriteTime"]));
-            }
-            set {
-                this["DBWriteTime"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("opc.tcp://Precision7530:53530/OPCUA/SimulationServer")]
-        public string UA_TCP {
-            get {
-                return ((string)(this["UA_TCP"]));
-            }
-            set {
-                this["UA_TCP"] = value;
-            }
-        }
     }
 }

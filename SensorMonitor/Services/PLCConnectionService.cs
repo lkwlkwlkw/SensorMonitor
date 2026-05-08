@@ -14,8 +14,8 @@ namespace SensorMonitor.Services
         private ApplicationDescription? clientDescription;
         private ClientSessionChannel? channel;
         public event Action? OnDataReceived;
+        public event Action<string>? ConnectionStatusChanged;
 
-        
         private float[] _Temperature  = new float[12];
         public float[] Temperature { get => _Temperature; }
 
@@ -30,9 +30,7 @@ namespace SensorMonitor.Services
         public PLCConnectionService(IOptionsMonitor<AppSettings> options)
         {
             _settings = options.CurrentValue;
-            
-          //  MessageBox.Show($"Refresh PLC interval: {_settings.NodeIds.T1}");
-          //  MessageBox.Show($"Save to DB interval: {_settings.SaveToDBInterval}");
+        
         }
 
         private async Task Connect()
@@ -54,7 +52,7 @@ namespace SensorMonitor.Services
             try
             {
                 await channel.OpenAsync();
-
+                ConnectionStatusChanged?.Invoke($"Połączono z PLC: {channel.RemoteEndpoint.EndpointUrl}");
                 Debug.WriteLine($"Opened session with endpoint '{channel.RemoteEndpoint.EndpointUrl}'.");
                 Debug.WriteLine($"SecurityPolicy: '{channel.RemoteEndpoint.SecurityPolicyUri}'.");
                 Debug.WriteLine($"SecurityMode: '{channel.RemoteEndpoint.SecurityMode}'.");
@@ -66,6 +64,7 @@ namespace SensorMonitor.Services
             {
                 await channel.AbortAsync();
                 Debug.WriteLine(ex.Message);
+                ConnectionStatusChanged?.Invoke($"Brak połączenia z PLC: {ex.Message}");
                 await Connect();
             }
         }
@@ -174,8 +173,9 @@ namespace SensorMonitor.Services
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(ex.Message);
-                    await channel!.AbortAsync();
+                    ConnectionStatusChanged?.Invoke($"Problem z połączeniem: {ex.Message}");
+                    await channel!.AbortAsync(); //???????????????????
+                    await channel!.CloseAsync();
                     await Connect();
                     break;
                 }

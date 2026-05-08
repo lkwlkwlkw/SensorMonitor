@@ -37,7 +37,7 @@
     <DockPanel LastChildFill="True">
         <StatusBar Height="24" DockPanel.Dock="Bottom">
             <StatusBarItem>
-                <TextBlock Text="Gotowy" />
+                <TextBlock Text="{Binding ConnectionStatusText}" />
             </StatusBarItem>
         </StatusBar>
 
@@ -78,12 +78,24 @@
                         <TextBlock
                             Margin="20,0,0,0"
                             VerticalAlignment="Center"
-                            Text="Czas cyklu:" />
+                            FontWeight="Bold"
+                            Text="Czas cyklu: " 
+                            />
                         <TextBlock
                             Margin="10,0,0,0"
                             VerticalAlignment="Center"
+                            
                             Text="{Binding CycleDurationText}" />
-                        <TextBlock HorizontalAlignment="Center" Height="60" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center" Width="58"/>
+                        <TextBlock
+                            Margin="10,0,0,0"
+                            FontWeight="Bold"
+                            VerticalAlignment="Center"
+                            Text="Start cyklu: " />
+                        <TextBlock
+    Margin="10,0,0,0"
+    VerticalAlignment="Center"
+                            
+    Text="{Binding CycleStartText}" />
                     </ui:SimpleStackPanel>
 
                     <Canvas Background="#EEE">

@@ -13,6 +13,7 @@ namespace SensorMonitor
     public partial class App : Application
     {
         private UaApplication application;
+        private static Mutex? _mutex;
 
         public static IHost? Host { get; private set; }
 
@@ -46,6 +47,23 @@ namespace SensorMonitor
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            const string mutexName = "SensorMonitor";
+
+            bool createdNew;
+            _mutex = new Mutex(true, mutexName, out createdNew);
+
+            if (!createdNew)
+            {
+                // Aplikacja już działa
+                MessageBox.Show("Aplikacja już działa.", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
+                Shutdown();
+                return;
+            }
+
+
+
+
+
             base.OnStartup(e);      
             var mainWindow = Host!.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
