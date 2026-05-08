@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using ModernWpf.Controls;
 using SensorMonitor.Services;
 using SensorMonitor.ViewModels;
+using System.Globalization;
 using System.Windows;
 using Workstation.ServiceModel.Ua;
 
@@ -47,6 +48,9 @@ namespace SensorMonitor
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo("pl-PL");
+
             const string mutexName = "SensorMonitor";
 
             bool createdNew;
