@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Diagnostics;
-using System.Windows;
 using Workstation.ServiceModel.Ua;
 using Workstation.ServiceModel.Ua.Channels;
 
@@ -9,12 +8,10 @@ namespace SensorMonitor.Services
     public class PLCConnectionService
     {
         private readonly AppSettings _settings;
-
-
-        private ApplicationDescription? clientDescription;
-        private ClientSessionChannel? channel;
-        public event Action? OnDataReceived;
-        public event Action<string>? ConnectionStatusChanged;
+        private ApplicationDescription clientDescription;
+        private ClientSessionChannel channel;
+        public event Action OnDataReceived;
+        public event Action<string> ConnectionStatusChanged;
 
         private float[] _Temperature  = new float[12];
         public float[] Temperature { get => _Temperature; }

@@ -6,8 +6,8 @@ namespace SensorMonitor.Services
 {
     public class DataBaseService
     {
-        private DataStore? _dataStore;
-        public IDocumentCollection<Pomiar>? Collection;
+        private DataStore _dataStore;
+        public IDocumentCollection<Pomiar> Collection;
     //    private bool _StorageInitialized = false;
 
         public class Pomiar

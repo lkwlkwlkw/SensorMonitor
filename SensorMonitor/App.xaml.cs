@@ -12,11 +12,9 @@ namespace SensorMonitor
 {    
 
     public partial class App : Application
-    {
-        private UaApplication application;
-        private static Mutex? _mutex;
-
-        public static IHost? Host { get; private set; }
+    {       
+        private static Mutex _mutex;
+        public static IHost Host { get; private set; }
 
         public App()
         {

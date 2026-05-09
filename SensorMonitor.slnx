@@ -1,3 +1,14 @@
 <Solution>
-  <Project Path="SensorMonitor/SensorMonitor.csproj" />
+  <Configurations>
+    <BuildType Name="All" />
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+  </Configurations>
+  <Project Path="SensorMonitor Installer/SensorMonitor Installer.aiproj" Type="840c416c-b8f3-42bc-b0dd-f6bb14c9f8cb" Id="25824cc6-8c84-495a-af44-350f49ca6a69">
+    <BuildType Project="All" />
+    <Platform Project="?" />
+  </Project>
+  <Project Path="SensorMonitor/SensorMonitor.csproj">
+    <BuildType Solution="All|*" Project="Debug" />
+  </Project>
 </Solution>
