@@ -1,4 +1,5 @@
 ﻿using JsonFlatFileDataStore;
+using ModernWpf.Controls;
 using System.IO;
 
 namespace SensorMonitor.Services
@@ -29,15 +30,38 @@ namespace SensorMonitor.Services
             public float Weight { get; set; }
         }
 
-        public void CreateFile()
+        public void CreateNewFile()
         {
-           // if (_StorageInitialized)
-           //     return;
             Directory.CreateDirectory(@"C:\Raporty");
-           // _dataStore = new DataStore(@"C:\Raporty\"+ $"Aktualny_Raport.json");
             _dataStore = new DataStore( $@"C:\Raporty\Raport_{DateTime.Now:yyyyMMddHHmm}.json");
             Collection = _dataStore.GetCollection<Pomiar>("Pomiary");
-          //  _StorageInitialized = true;
+         }
+
+        public Boolean OpenExistingFile(string filePath)
+        {
+
+            try
+            {
+                _dataStore = new DataStore(filePath);
+                Collection = _dataStore.GetCollection<Pomiar>("Pomiary");
+                return true;
+            }
+            catch (Exception)
+            {
+
+                var dialog = new ContentDialog
+                {
+                    Title = "Błąd",
+                    Content = "Nie udało się otworzyć pliku.",
+                    PrimaryButtonText = "OK",
+                    DefaultButton = ContentDialogButton.Primary
+                };
+                dialog.ShowAsync();
+
+                return false;
+                
+            }
+            
         }
 
         public void SavePomiar(Pomiar pomiar)

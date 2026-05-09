@@ -7,6 +7,7 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:ei="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:SensorMonitor.ViewModels"
     Title="Sensor Monitor"
     Width="1280"
     Height="720"
@@ -32,6 +33,7 @@
             <Setter Property="Foreground" Value="White" />
             <Setter Property="Padding" Value="8,4" />
         </Style>
+        <local:NotConverter x:Key="Not" />
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
@@ -105,6 +107,15 @@
                              Content="Domyślny trend"
                             Command="{Binding ClickPlotFormatCommand}"
                             IsEnabled="{Binding StopButtonEnabled}"/>
+                        <Button
+                         Width="120"
+                         Height="40"
+                         Margin="20,0,0,0"
+        
+                          Content="Wczytaj trend"
+                          Command="{Binding ClickOpenFileCommand }"
+                          IsEnabled="{Binding StopButtonEnabled, Converter={StaticResource Not}}"/>
+                        
                     </ui:SimpleStackPanel>
 
                     <Canvas Background="#EEE">
@@ -174,6 +185,21 @@
                         <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="600" Canvas.Top="100" >
                             <TextBlock Text="T12" Background="LightGray"/>
                             <TextBlock Text="{Binding Temperature[11]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="650" Canvas.Top="100" >
+                            <TextBlock Text="P1" Background="LightGray"/>
+                            <TextBlock Text="{Binding Pressure[0]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="700" Canvas.Top="100" >
+                            <TextBlock Text="P2" Background="LightGray"/>
+                            <TextBlock Text="{Binding Pressure[1]}" Background="WhiteSmoke"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Orientation="Vertical" Canvas.Left="750" Canvas.Top="100" >
+                            <TextBlock Text="W" Background="LightGray"/>
+                            <TextBlock Text="{Binding WeightText}" Background="WhiteSmoke"/>
                         </ui:SimpleStackPanel>
 
                     </Canvas>

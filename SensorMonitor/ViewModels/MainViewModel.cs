@@ -8,11 +8,14 @@ using SensorMonitor.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace SensorMonitor.ViewModels
 {
@@ -26,6 +29,7 @@ namespace SensorMonitor.ViewModels
         public ICommand ClickStartCommand { get; }
         public ICommand ClickStopCommand { get; }
         public ICommand ClickPlotFormatCommand { get; }
+        public ICommand ClickOpenFileCommand { get; }
         private string _CycleDurationText="00:00:00";
         private string _CycleStartText = "00:00:00";
         private string _ConnectionStatusText = "Brak połączenia";
@@ -33,6 +37,11 @@ namespace SensorMonitor.ViewModels
         private DateTime _startTime;
         public ObservableCollection<string> Temperature { get; } =
         new ObservableCollection<string> { "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0" };
+        public ObservableCollection<string> Pressure { get; } =
+          new ObservableCollection<string> { "0.0", "0.0"};
+        public string _Weight  = "0.0";
+
+
         private bool _DBWriteActive;
         private uint _DBWriteTicksCounter;
         private uint _DBWriteTicksNeeded;
@@ -105,6 +114,18 @@ namespace SensorMonitor.ViewModels
         }
 
 
+        public string WeightText
+        {
+            get { return _Weight; }
+            set
+            {
+                _Weight = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+
 
 
         public  MainViewModel( PLCConnectionService _PLCConnectionService, DataBaseService Data, IOptionsMonitor<AppSettings> options)
@@ -114,9 +135,10 @@ namespace SensorMonitor.ViewModels
             ClickStartCommand = new RelayCommand(OnStartClick);
             ClickStopCommand = new RelayCommand(OnStopClick);
             ClickPlotFormatCommand = new RelayCommand(OnClickPlotFormat);
+            ClickOpenFileCommand = new RelayCommand(OnClickOpenFile);
 
             _dataBaseService = Data; // Iniekcja zależności usługi bazy danych
-           _dataBaseService.CreateFile(); // Tworzenie pliku bazy danych
+          // _dataBaseService.CreateNewFile(); // Tworzenie pliku bazy danych
 
             InitializePressurePlot();
             InitializeTemeraturePlot();
@@ -145,6 +167,94 @@ namespace SensorMonitor.ViewModels
 
             //throw new NotImplementedException();
         }
+
+
+        private void OnClickOpenFile(object? obj)
+        {
+            // Implementacja otwierania pliku z danymi
+            // Możesz użyć OpenFileDialog lub innego mechanizmu do wyboru pliku
+            // Po wybraniu pliku, wczytaj dane i zaktualizuj wykresy
+            //throw new NotImplementedException();
+
+
+           
+
+            var dialog = new CommonOpenFileDialog();
+            dialog.Title = "Wybierz plik";
+            dialog.Filters.Add(new CommonFileDialogFilter("Pliki JSON", "*.json"));
+            dialog.Multiselect = false;
+
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                string path = dialog.FileName;
+                LoadDataFromDatabase(path);
+            }
+
+
+        }
+
+
+        private void LoadDataFromDatabase(string filePath)
+        {
+            // Implementacja wczytywania danych z pliku bazy danych
+            // Po wczytaniu danych, zaktualizuj wykresy
+            //throw new NotImplementedException();
+
+            TemperatureModel.ResetAllAxes();
+            PressureModel.ResetAllAxes();
+            WeightModel.ResetAllAxes();
+
+
+            if (_dataBaseService.OpenExistingFile(filePath)) // Wczytanie danych z wybranego pliku bazy danych
+            {
+
+                for (int seriesIndex = 0; seriesIndex < _TemperatureSeries.Length; seriesIndex++)
+                {
+                    //  _TemperatureSeries[seriesIndex] = new LineSeries { Title = $"Temperature {seriesIndex}", IsVisible = true };
+
+                    _TemperatureSeries[seriesIndex].Points.Clear(); // Wyczyść istniejące punkty przed dodaniem nowych danych z bazy
+                    foreach (var pomiar in _dataBaseService.Collection.AsQueryable())
+                    {
+                        var temperatureValue = (float)pomiar.GetType().GetProperty($"Temperatura{seriesIndex}").GetValue(pomiar);
+                        _TemperatureSeries[seriesIndex].Points.Add(
+                            DateTimeAxis.CreateDataPoint(pomiar.Data, temperatureValue)
+                        );
+
+                    }
+                    TemperatureModel.InvalidatePlot(true);
+                }
+
+
+                for (int seriesIndex = 0; seriesIndex < _PressureSeries.Length; seriesIndex++)
+                {
+                    //  _TemperatureSeries[seriesIndex] = new LineSeries { Title = $"Temperature {seriesIndex}", IsVisible = true };
+
+                    _PressureSeries[seriesIndex].Points.Clear(); // Wyczyść istniejące punkty przed dodaniem nowych danych z bazy
+                    foreach (var pomiar in _dataBaseService.Collection.AsQueryable())
+                    {
+                        var pressureValue = (float)pomiar.GetType().GetProperty($"Pressure{seriesIndex}").GetValue(pomiar);
+                        _PressureSeries[seriesIndex].Points.Add(
+                            DateTimeAxis.CreateDataPoint(pomiar.Data, pressureValue)
+                        );
+
+                    }
+                    PressureModel.InvalidatePlot(true);
+                }
+
+                _WeightSeries.Points.Clear(); // Wyczyść istniejące punkty przed dodaniem nowych danych z bazy
+                foreach (var pomiar in _dataBaseService.Collection.AsQueryable())
+                {
+                    var weightValue = (float)pomiar.GetType().GetProperty($"Weight").GetValue(pomiar);
+                    _WeightSeries.Points.Add(
+                        DateTimeAxis.CreateDataPoint(pomiar.Data, weightValue)
+                    );
+
+                }
+                WeightModel.InvalidatePlot(true);
+            }
+
+        }
+
 
         private void InitializeTemperatureSeries()
         {
@@ -383,7 +493,7 @@ StopButtonEnabled = true;
                 CycleDurationText = _CycleTime.ToString(@"hh\:mm\:ss");
             };
             _timer.Start();
-            _dataBaseService.CreateFile(); // Tworzenie nowego pliku bazy danych przy każdym rozpoczęciu pomiaru
+            _dataBaseService.CreateNewFile(); // Tworzenie nowego pliku bazy danych przy każdym rozpoczęciu pomiaru
             _DBWriteActive = true;
             CycleStartText = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
 
@@ -434,6 +544,15 @@ StopButtonEnabled = true;
             {
                 Temperature[i] = _plcConnectionService.Temperature[i].ToString("F1");
             }
+
+
+
+            for (int i = 0; i < Pressure.Count; i++)
+            {
+                Pressure[i] = _plcConnectionService.Pressure[i].ToString("F1");
+            }
+
+            WeightText = _plcConnectionService.Weight.ToString("F1");
         }
 
         private bool _closingHandled = false;
@@ -464,6 +583,18 @@ StopButtonEnabled = true;
         }
 
 
+       
+
+
 
     }
+    public class NotConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => value is bool b ? !b : value;
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => value is bool b ? !b : value;
+    }
+
 }
