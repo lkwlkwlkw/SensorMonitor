@@ -5,6 +5,7 @@ using ModernWpf.Controls;
 using SensorMonitor.Services;
 using SensorMonitor.ViewModels;
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using Workstation.ServiceModel.Ua;
 
@@ -60,12 +61,8 @@ namespace SensorMonitor
                 MessageBox.Show("Aplikacja już działa.", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
                 Shutdown();
                 return;
-            }
-
-
-
-
-
+            }           
+            Directory.CreateDirectory(@"C:\Raporty\Obrazy");
             base.OnStartup(e);      
             var mainWindow = Host!.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();

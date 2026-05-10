@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Options;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using ModernWpf.Controls;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
+using OxyPlot.Wpf;
 using SensorMonitor.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -14,7 +16,6 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace SensorMonitor.ViewModels
 {
@@ -38,6 +39,7 @@ namespace SensorMonitor.ViewModels
         public ICommand ClickOpenFileCommand { get; }
         private string _CycleDurationText = "00:00:00";
         private string _CycleStartText = "00:00:00";
+        private string _CycleStartTextFileName;
         private string _ConnectionStatusText = "Brak połączenia";
         private DispatcherTimer _timer = new DispatcherTimer();
         private DateTime _startTime;
@@ -61,7 +63,7 @@ namespace SensorMonitor.ViewModels
         }
 
 
-        private bool _StartButtonEnabled = true;
+        private bool _StartButtonEnabled = false;
         public bool StartButtonEnabled
         {
             get => _StartButtonEnabled;
@@ -176,6 +178,7 @@ namespace SensorMonitor.ViewModels
             _dataBaseService.CreateNewFile(); // Tworzenie nowego pliku bazy danych przy każdym rozpoczęciu pomiaru
             _DBWriteActive = true;
             CycleStartText = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
+            _CycleStartTextFileName = DateTime.Now.ToString("yyyyMMdd_HHmmss");
         }
 
         private async void OnStopClick(object parameter)
@@ -199,6 +202,12 @@ namespace SensorMonitor.ViewModels
                 _DBWriteActive = false;
                 _timer.Stop();
                 _dataBaseService.DatabaseClose(); // Zamknięcie bazy danych i przeniesienie pliku do folderu Raporty
+
+                var pngExporter = new PngExporter { Width = 1280, Height = 720 };                
+                pngExporter.ExportToFile(TemperatureModel, $@"c:\Raporty\Obrazy\{_CycleStartTextFileName}_Temperatura.png");
+                pngExporter.ExportToFile(PressureModel, $@"c:\Raporty\Obrazy\{_CycleStartTextFileName}_Ciśnienie.png");
+                pngExporter.ExportToFile(WeightModel, $@"c:\Raporty\Obrazy\{_CycleStartTextFileName}_Waga.png");
+
             }
         }
 
@@ -425,6 +434,16 @@ namespace SensorMonitor.ViewModels
         {
             // Możesz tutaj zaktualizować interfejs użytkownika, np. poprzez powiadomienie o zmianie statusu połączenia
             ConnectionStatusText = status;
+            if (_plcConnectionService.IsConnected)
+            {
+                StartButtonEnabled = true;
+                StopButtonEnabled = false;
+            }
+            else
+            {
+                StartButtonEnabled = false;
+                StopButtonEnabled = false;
+            }
         }
 
         private void PlcService_OnDataReceived() // Aktualizacja danych z PLC i odświeżenie wykresów

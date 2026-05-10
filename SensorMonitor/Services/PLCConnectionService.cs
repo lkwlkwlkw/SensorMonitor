@@ -21,6 +21,7 @@ namespace SensorMonitor.Services
 
         private float _Weight;
         public float Weight { get => _Weight; }
+        public bool IsConnected { get => channel != null && channel.State == CommunicationState.Opened; }
 
 
 
