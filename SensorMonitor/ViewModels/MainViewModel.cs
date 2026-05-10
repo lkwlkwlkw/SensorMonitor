@@ -336,7 +336,7 @@ namespace SensorMonitor.ViewModels
         {
             for (int seriesIndex = 0; seriesIndex < _TemperatureSeries.Length; seriesIndex++)
             {
-                _TemperatureSeries[seriesIndex] = new LineSeries { Title = $"Temperature {seriesIndex}", IsVisible = true };
+                _TemperatureSeries[seriesIndex] = new LineSeries { Title = $"Temp. {seriesIndex+1}", IsVisible = true };
                 this.TemperatureModel.Series.Add(_TemperatureSeries[seriesIndex]);               
             }
         }
@@ -345,7 +345,7 @@ namespace SensorMonitor.ViewModels
         {
             for (int seriesIndex = 0; seriesIndex < _PressureSeries.Length; seriesIndex++)
             {
-                _PressureSeries[seriesIndex] = new LineSeries { Title = $"Pressure {seriesIndex}", IsVisible = true };
+                _PressureSeries[seriesIndex] = new LineSeries { Title = $"Ciśnienie {seriesIndex+1}", IsVisible = true };
                 this.PressureModel.Series.Add(_PressureSeries[seriesIndex]);
              }
         }
@@ -472,7 +472,7 @@ namespace SensorMonitor.ViewModels
             {
                 //_TemperatureSeries[i].Points.Add(new DataPoint( DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Temperature[i] ));
                 AddPointToBoth(TemperatureModel, TemperatureModelCommon, DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Temperature[i],i);
-                Debug.WriteLine($"Dodano punkt do serii Temperature {i}: {DateTimeAxis.ToDouble(DateTime.Now)}, {_plcConnectionService.Temperature[i]}");
+               
             }
             this.TemperatureModel.InvalidatePlot(true);
             TemperatureModelCommon.InvalidatePlot(true);
@@ -496,20 +496,20 @@ namespace SensorMonitor.ViewModels
             _dataBaseService.SavePomiar(new DataBaseService.Pomiar
             {
                 Data = DateTime.Now,
-                Temperatura0 = (float)Math.Round(_plcConnectionService.Temperature[0], 1),
-                Temperatura1 = (float)Math.Round(_plcConnectionService.Temperature[1], 1),
-                Temperatura2 = (float)Math.Round(_plcConnectionService.Temperature[2], 1),
-                Temperatura3 = (float)Math.Round(_plcConnectionService.Temperature[3], 1),
-                Temperatura4 = (float)Math.Round(_plcConnectionService.Temperature[4], 1),
-                Temperatura5 = (float)Math.Round(_plcConnectionService.Temperature[5], 1),
-                Temperatura6 = (float)Math.Round(_plcConnectionService.Temperature[6], 1),
-                Temperatura7 = (float)Math.Round(_plcConnectionService.Temperature[7], 1),
-                Temperatura8 = (float)Math.Round(_plcConnectionService.Temperature[8], 1),
-                Temperatura9 = (float)Math.Round(_plcConnectionService.Temperature[9], 1),
-                Temperatura10 = (float)Math.Round(_plcConnectionService.Temperature[10], 1),
-                Temperatura11 = (float)Math.Round(_plcConnectionService.Temperature[11], 1),
-                Pressure0 = (float)Math.Round(_plcConnectionService.Pressure[0], 1),
-                Pressure1 = (float)Math.Round(_plcConnectionService.Pressure[1], 1),
+                Temp1 = (float)Math.Round(_plcConnectionService.Temperature[0], 1),
+                Temp2 = (float)Math.Round(_plcConnectionService.Temperature[1], 1),
+                Temp3 = (float)Math.Round(_plcConnectionService.Temperature[2], 1),
+                Temp4 = (float)Math.Round(_plcConnectionService.Temperature[3], 1),
+                Temp5 = (float)Math.Round(_plcConnectionService.Temperature[4], 1),
+                Temp6 = (float)Math.Round(_plcConnectionService.Temperature[5], 1),
+                Temp7 = (float)Math.Round(_plcConnectionService.Temperature[6], 1),
+                Temp8 = (float)Math.Round(_plcConnectionService.Temperature[7], 1),
+                Temp9 = (float)Math.Round(_plcConnectionService.Temperature[8], 1),
+                Temp10 = (float)Math.Round(_plcConnectionService.Temperature[9], 1),
+                Temp11 = (float)Math.Round(_plcConnectionService.Temperature[10], 1),
+                Temp12 = (float)Math.Round(_plcConnectionService.Temperature[11], 1),
+                Pressure1 = (float)Math.Round(_plcConnectionService.Pressure[0], 1),
+                Pressure2 = (float)Math.Round(_plcConnectionService.Pressure[1], 1),
                 Weight = (float)Math.Round(_plcConnectionService.Weight, 1)
             }); 
         }

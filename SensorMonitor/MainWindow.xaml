@@ -95,6 +95,37 @@
                             </ui:SimpleStackPanel>
                         </Button>
 
+                        <Button
+                            Width="120"
+                            Height="40"
+                             Margin="20,0,0,0"
+                            Command="{Binding ClickPlotFormatCommand}"
+                            >
+                            <ui:SimpleStackPanel Orientation="Horizontal">
+                                <materialIcons:MaterialIcon
+                             Height="20"
+                             Animation="Spin"
+                                Foreground="Black"
+                                Kind="SkipBackwardOutline" />
+                                <TextBlock Margin="6,0,0,0" Text="Domyślne" />
+                            </ui:SimpleStackPanel>
+                        </Button>
+                        <Button
+                        Width="120"
+                        Height="40"
+                        Margin="20,0,0,0"
+                        Command="{Binding ClickOpenFileCommand}"
+                        IsEnabled="{Binding StopButtonEnabled, Converter={StaticResource Not}}" >
+                            <ui:SimpleStackPanel Orientation="Horizontal">
+                                <materialIcons:MaterialIcon
+                        Height="20"
+                        Animation="Spin"                                   
+                        Foreground="Black"
+                        Kind="FileReportOutline" />
+                                <TextBlock Margin="6,0,0,0" Text="Wczytaj" />
+                            </ui:SimpleStackPanel>
+                        </Button>
+
 
                         <TextBlock
                             Margin="20,0,0,0"
@@ -115,36 +146,7 @@
                             VerticalAlignment="Center"
                             Text="{Binding CycleStartText}" />
 
-                        <Button
-                            Width="120"
-                            Height="40"
-                            Margin="20,0,0,0"
-                            Command="{Binding ClickPlotFormatCommand}"
-                             >
-                            <ui:SimpleStackPanel Orientation="Horizontal">
-                                <materialIcons:MaterialIcon
-                                 Height="20"
-                                    Animation="Spin"
-                                    Foreground="Black"
-                                    Kind="SkipBackwardOutline" />
-                                <TextBlock Margin="6,0,0,0" Text="Domyślne" />
-                            </ui:SimpleStackPanel>
-                        </Button>
-                        <Button
-                            Width="120"
-                            Height="40"
-                            Margin="20,0,0,0"
-                            Command="{Binding ClickOpenFileCommand}"
-                            IsEnabled="{Binding StopButtonEnabled, Converter={StaticResource Not}}" >
-                            <ui:SimpleStackPanel Orientation="Horizontal">
-                                <materialIcons:MaterialIcon
-                                Height="20"
-                                Animation="Spin"                                   
-                                Foreground="Black"
-                                Kind="FileReportOutline" />
-                                <TextBlock Margin="6,0,0,0" Text="Wczytaj" />
-                            </ui:SimpleStackPanel>
-                        </Button>
+
 
                     </ui:SimpleStackPanel>
 
@@ -376,7 +378,7 @@
                     Margin="20"
                     HorizontalAlignment="Center"
                     Orientation="Vertical">
-                   <Image
+                    <Image
                         Width="200"                        
                         Source="/Images/S7ExpertLogo.png" 
                        Margin="0,20,0,0"
@@ -391,7 +393,7 @@
                         FontSize="18"
                         FontWeight="Bold"
                         Text="tel. +48 606 631 709" />
-                    
+
                     <TextBlock
                         Margin="0,20,0,0">
                         <Bold>Instrukcja:</Bold> <LineBreak />

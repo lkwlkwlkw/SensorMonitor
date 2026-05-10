@@ -151,8 +151,7 @@ namespace SensorMonitor.Services
             {
                 try
                 {
-                    var readResult = await channel!.ReadAsync(readRequest);
-                    
+                    var readResult = await channel!.ReadAsync(readRequest);                   
 
                     for (int i = 0; i < 12; i++)
                     {

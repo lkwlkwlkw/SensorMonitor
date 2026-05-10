@@ -13,20 +13,20 @@ namespace SensorMonitor.Services
         public class Pomiar
         {
             public DateTime Data { get; set; }
-            public float Temperatura0 { get; set; }
-            public float Temperatura1 { get; set; }
-            public float Temperatura2 { get; set; }
-            public float Temperatura3 { get; set; }
-            public float Temperatura4 { get; set; }
-            public float Temperatura5 { get; set; }
-            public float Temperatura6 { get; set; }
-            public float Temperatura7 { get; set; }
-            public float Temperatura8 { get; set; }
-            public float Temperatura9 { get; set; }
-            public float Temperatura10 { get; set; }
-            public float Temperatura11 { get; set; }
-            public float Pressure0 { get; set; }
+            public float Temp1 { get; set; }
+            public float Temp2 { get; set; }
+            public float Temp3 { get; set; }
+            public float Temp4 { get; set; }
+            public float Temp5{ get; set; }
+            public float Temp6 { get; set; }
+            public float Temp7 { get; set; }
+            public float Temp8 { get; set; }
+            public float Temp9 { get; set; }
+            public float Temp10 { get; set; }
+            public float Temp11 { get; set; }
+            public float Temp12 { get; set; }
             public float Pressure1 { get; set; }
+            public float Pressure2 { get; set; }
             public float Weight { get; set; }
         }
 
@@ -57,24 +57,18 @@ namespace SensorMonitor.Services
                     DefaultButton = ContentDialogButton.Primary
                 };
                 dialog.ShowAsync();
-
-                return false;
-                
-            }
-            
+                return false;                
+            }            
         }
 
         public void SavePomiar(Pomiar pomiar)
         {
             Collection?.InsertOneAsync(pomiar);
         }
-
-        //  public void DatabaseClose(DateTime startDate)
+       
         public void DatabaseClose()
         {
-            _dataStore?.Dispose();
-           // File.Move($@"C:\Raporty\Aktualny_Raport.json", $@"C:\Raporty\Raport_{startDate:yyyyMMddHHmm}.json", true);
-         //   _StorageInitialized = false;
+            _dataStore?.Dispose();         
         }
     }
 }
