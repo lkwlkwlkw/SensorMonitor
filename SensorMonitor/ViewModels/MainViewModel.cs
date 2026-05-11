@@ -17,6 +17,8 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+
+
 namespace SensorMonitor.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
@@ -62,7 +64,6 @@ namespace SensorMonitor.ViewModels
             }
         }
 
-
         private bool _StartButtonEnabled = false;
         public bool StartButtonEnabled
         {
@@ -86,7 +87,6 @@ namespace SensorMonitor.ViewModels
             }
         }
 
-
         public string CycleStartText
         {
             get { return _CycleStartText; }
@@ -107,7 +107,6 @@ namespace SensorMonitor.ViewModels
             }
         }
 
-
         public string WeightText
         {
             get { return _Weight; }
@@ -118,6 +117,15 @@ namespace SensorMonitor.ViewModels
             }
         }
 
+        public string AssemblyVersion 
+        {
+            get { return BuildInformation.AssemblyVersion; }
+        }
+
+        public string AssemblyBuildDate
+        {
+            get { return BuildInformation.BuildAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm"); }
+        }
 
         public MainViewModel(PLCConnectionService _PLCConnectionService, DataBaseService Data, IOptionsMonitor<AppSettings> options)
         {
@@ -148,6 +156,7 @@ namespace SensorMonitor.ViewModels
             _plcConnectionService.ConnectionStatusChanged += PlcService_OnConnectionStatusChanged; // Subskrypcja na zdarzenie zmiany statusu połączenia
 
             _DBWriteTicksNeeded = (uint)(_settings.SaveToDBInterval / _settings.PLCPollingInterval); // Obliczenie, ile cykli odczytu PLC musi minąć, zanim dane zostaną zapisane do bazy danych
+              
         }
 
         #region OnClick Events

@@ -6,18 +6,28 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Fasticon-Comic-Iphone-Graph.ico</ApplicationIcon>
+    <ApplicationIcon>Images\Fasticon-Comic-Iphone-Graph.ico</ApplicationIcon>
     <PlatformTarget>x64</PlatformTarget>
     <StartupObject></StartupObject>
 	<Nullable>disable</Nullable>
+	<IncrementVersionOnBuild>1.yyyy.Mdd.Hmm</IncrementVersionOnBuild>
+	<AssemblyVersion>1.0.0.1</AssemblyVersion>
+	<FileVersion>1.0.0.1</FileVersion>
+	<Version>1.0.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Fasticon-Comic-Iphone-Graph.ico" />
     <None Remove="Images\S7ExpertLogo.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Images\Fasticon-Comic-Iphone-Graph.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="JsonFlatFileDataStore" Version="2.4.2" />
+    <PackageReference Include="LinkDotNet.BuildInformation" Version="2.1.2" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
     <PackageReference Include="Material.Icons.WPF" Version="3.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
@@ -30,12 +40,17 @@
 	 
     <PackageReference Include="OxyPlot.Wpf" Version="2.2.0" />
 	 
+    <PackageReference Include="TaskScheduler" Version="2.12.2" />
+	 
     <PackageReference Include="WindowsAPICodePack" Version="8.0.15.1" />
 	 
     <PackageReference Include="Workstation.UaClient" Version="3.2.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\Fasticon-Comic-Iphone-Graph.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\S7ExpertLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -52,9 +67,6 @@
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Fasticon-Comic-Iphone-Graph.ico">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

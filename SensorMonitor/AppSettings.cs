@@ -7,6 +7,7 @@
     public int SaveToDBInterval { get; set; }
     public NodeIds NodeIds { get; set; }
     public ScaleFactors ScaleFactors { get; set; }
+    public bool StartWithWindows { get; set; }
 }
 
 public class NodeIds
