@@ -8,15 +8,13 @@ using SensorMonitor.ViewModels;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Windows;
-using Workstation.ServiceModel.Ua;
 
 namespace SensorMonitor
-{    
+{
 
     public partial class App : Application
-    {       
+    {
         private static Mutex _mutex;
         public static IHost Host { get; private set; }
 
@@ -59,12 +57,12 @@ namespace SensorMonitor
                 MessageBox.Show("Aplikacja już działa.", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
                 Shutdown();
                 return;
-            }           
+            }
             Directory.CreateDirectory(@"C:\Raporty\Obrazy");
-            base.OnStartup(e);      
+            base.OnStartup(e);
             var mainWindow = Host!.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
-            var plcService = Host!.Services.GetRequiredService<PLCConnectionService>();           
+            var plcService = Host!.Services.GetRequiredService<PLCConnectionService>();
             plcService.ConnectPLC();
             var appSettings = Host!.Services.GetRequiredService<IOptions<AppSettings>>().Value;
 
@@ -75,12 +73,12 @@ namespace SensorMonitor
             else
             {
                 RemoveTask();
-            }          
+            }
 
         }
 
         protected override async void OnExit(ExitEventArgs e)
-        {   
+        {
             if (Host is not null)
                 await Host.StopAsync();
 
@@ -107,9 +105,9 @@ namespace SensorMonitor
                     td.Settings.DisallowStartIfOnBatteries = false; // pozwala uruchomić na baterii
                     td.Settings.StopIfGoingOnBatteries = false; // nie zatrzymuje na baterii
                     td.Settings.RunOnlyIfIdle = false;
-                    td.Settings.RunOnlyIfNetworkAvailable = false;                   
+                    td.Settings.RunOnlyIfNetworkAvailable = false;
                     td.Settings.Enabled = true;
-                    td.Settings.ExecutionTimeLimit =TimeSpan.Zero; // brak limitu czasu wykonania                    
+                    td.Settings.ExecutionTimeLimit = TimeSpan.Zero; // brak limitu czasu wykonania                    
                     td.Triggers.Add(new LogonTrigger
                     {
                         UserId = Environment.UserName
@@ -119,9 +117,9 @@ namespace SensorMonitor
                     td.Principal.LogonType = TaskLogonType.InteractiveToken;
                     td.Principal.RunLevel = TaskRunLevel.Highest;
                     // Akcja: uruchom aplikację
-                    td.Actions.Add(new ExecAction(exePath, null, exeDir));   
+                    td.Actions.Add(new ExecAction(exePath, null, exeDir));
                     // Rejestracja zadania (nadpisuje jeśli istnieje)
-                   
+
                     ts.RootFolder.RegisterTaskDefinition(taskName, td);
                 }
                 catch (Exception ex)
@@ -132,8 +130,8 @@ namespace SensorMonitor
 
 
 
-                              
-            } 
+
+            }
         }
 
         private static bool RemoveTask(string taskName = "Sensor monitor")

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
-namespace SensorMonitor.ViewModels { 
+namespace SensorMonitor.ViewModels
+{
 
     public class RelayCommand : ICommand
     {

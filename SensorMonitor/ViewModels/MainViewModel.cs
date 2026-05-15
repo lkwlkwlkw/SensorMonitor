@@ -9,7 +9,6 @@ using OxyPlot.Wpf;
 using SensorMonitor.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -56,10 +55,12 @@ namespace SensorMonitor.ViewModels
         private readonly AppSettings _settings;
         private bool _StopButtonEnabled;
         public bool StopButtonEnabled
-        {   get => _StopButtonEnabled;
-            set{
+        {
+            get => _StopButtonEnabled;
+            set
+            {
                 _StopButtonEnabled = value;
-                OnPropertyChanged(nameof(StopButtonEnabled));                
+                OnPropertyChanged(nameof(StopButtonEnabled));
                 CommandManager.InvalidateRequerySuggested();// Powiadom WPF, że CanExecute mogło się zmienić
             }
         }
@@ -117,7 +118,7 @@ namespace SensorMonitor.ViewModels
             }
         }
 
-        public string AssemblyVersion 
+        public string AssemblyVersion
         {
             get { return BuildInformation.AssemblyVersion; }
         }
@@ -139,7 +140,7 @@ namespace SensorMonitor.ViewModels
 
             InitializePressurePlot();
             InitializeTemeraturePlot();
-            InitializeWeightPlot(); 
+            InitializeWeightPlot();
             InitializeTemperatureSeries(); // Inicjalizacja serii temperatur z danych z bazy
             InitializePressureSeries();
             InitializeWeightSeries();
@@ -156,7 +157,7 @@ namespace SensorMonitor.ViewModels
             _plcConnectionService.ConnectionStatusChanged += PlcService_OnConnectionStatusChanged; // Subskrypcja na zdarzenie zmiany statusu połączenia
 
             _DBWriteTicksNeeded = (uint)(_settings.SaveToDBInterval / _settings.PLCPollingInterval); // Obliczenie, ile cykli odczytu PLC musi minąć, zanim dane zostaną zapisane do bazy danych
-              
+
         }
 
         #region OnClick Events
@@ -168,7 +169,7 @@ namespace SensorMonitor.ViewModels
             StopButtonEnabled = true;
             if (_DBWriteActive)
                 return;
-            
+
             ResetPlotAndClearPoints(TemperatureModel, true);
             ResetPlotAndClearPoints(TemperatureModelCommon, true);
             ResetPlotAndClearPoints(PressureModel, true);
@@ -212,7 +213,7 @@ namespace SensorMonitor.ViewModels
                 _timer.Stop();
                 _dataBaseService.DatabaseClose(); // Zamknięcie bazy danych i przeniesienie pliku do folderu Raporty
 
-                var pngExporter = new PngExporter { Width = 1280, Height = 720 };                
+                var pngExporter = new PngExporter { Width = 1280, Height = 720 };
                 pngExporter.ExportToFile(TemperatureModel, $@"c:\Raporty\Obrazy\{_CycleStartTextFileName}_Temperatura.png");
                 pngExporter.ExportToFile(PressureModel, $@"c:\Raporty\Obrazy\{_CycleStartTextFileName}_Ciśnienie.png");
                 pngExporter.ExportToFile(WeightModel, $@"c:\Raporty\Obrazy\{_CycleStartTextFileName}_Waga.png");
@@ -255,7 +256,7 @@ namespace SensorMonitor.ViewModels
         #endregion
 
 
-        public void AddPointToBoth(PlotModel original, PlotModel clone, double x, double y,int SerieNumber)
+        public void AddPointToBoth(PlotModel original, PlotModel clone, double x, double y, int SerieNumber)
         {
             var p = new DataPoint(x, y);
 
@@ -265,8 +266,8 @@ namespace SensorMonitor.ViewModels
             s1.Points.Add(p);
             s2.Points.Add(new DataPoint(x, y));
 
-          //  original.InvalidatePlot(true);
-          //  clone.InvalidatePlot(true);
+            //  original.InvalidatePlot(true);
+            //  clone.InvalidatePlot(true);
         }
 
         public void ResetPlotAndClearPoints(PlotModel model, bool invalidate)
@@ -274,12 +275,12 @@ namespace SensorMonitor.ViewModels
             foreach (var s in model.Series.OfType<LineSeries>())
                 s.Points.Clear();
 
-          //  
+            //  
             if (invalidate)
             {
                 model.ResetAllAxes();
                 model.InvalidatePlot(true);
-            }   
+            }
         }
 
 
@@ -287,12 +288,12 @@ namespace SensorMonitor.ViewModels
         {
             // Implementacja wczytywania danych z pliku bazy danych
             // Po wczytaniu danych, zaktualizuj wykresy
-            ResetPlotAndClearPoints(TemperatureModel,false);
-            ResetPlotAndClearPoints(PressureModel,false);
-            ResetPlotAndClearPoints(WeightModel,false);
-            ResetPlotAndClearPoints(TemperatureModelCommon,false);
-            ResetPlotAndClearPoints(PressureModelCommon,false);
-            ResetPlotAndClearPoints(WeightModelCommon,false);
+            ResetPlotAndClearPoints(TemperatureModel, false);
+            ResetPlotAndClearPoints(PressureModel, false);
+            ResetPlotAndClearPoints(WeightModel, false);
+            ResetPlotAndClearPoints(TemperatureModelCommon, false);
+            ResetPlotAndClearPoints(PressureModelCommon, false);
+            ResetPlotAndClearPoints(WeightModelCommon, false);
 
             if (_dataBaseService.OpenExistingFile(filePath)) // Wczytanie danych z wybranego pliku bazy danych
             {
@@ -300,35 +301,35 @@ namespace SensorMonitor.ViewModels
                 {
                     //  _TemperatureSeries[seriesIndex] = new LineSeries { Title = $"Temperature {seriesIndex}", IsVisible = true };
 
-                   // _TemperatureSeries[seriesIndex].Points.Clear(); // Wyczyść istniejące punkty przed dodaniem nowych danych z bazy
+                    // _TemperatureSeries[seriesIndex].Points.Clear(); // Wyczyść istniejące punkty przed dodaniem nowych danych z bazy
                     foreach (var pomiar in _dataBaseService.Collection.AsQueryable())
                     {
-                        var temperatureValue = (float)pomiar.GetType().GetProperty($"Temperatura{seriesIndex}").GetValue(pomiar);
-                       // _TemperatureSeries[seriesIndex].Points.Add(DateTimeAxis.CreateDataPoint(pomiar.Data, temperatureValue)
-                       AddPointToBoth(TemperatureModel, TemperatureModelCommon, DateTimeAxis.ToDouble(pomiar.Data), temperatureValue,seriesIndex  );
+                        var temperatureValue = (float)pomiar.GetType().GetProperty($"Temp{seriesIndex + 1}").GetValue(pomiar);
+                        // _TemperatureSeries[seriesIndex].Points.Add(DateTimeAxis.CreateDataPoint(pomiar.Data, temperatureValue)
+                        AddPointToBoth(TemperatureModel, TemperatureModelCommon, DateTimeAxis.ToDouble(pomiar.Data), temperatureValue, seriesIndex);
                     }
-                   
+
                 }
 
 
                 for (int seriesIndex = 0; seriesIndex < _PressureSeries.Length; seriesIndex++)
-                {   
+                {
                     _PressureSeries[seriesIndex].Points.Clear(); // Wyczyść istniejące punkty przed dodaniem nowych danych z bazy
                     foreach (var pomiar in _dataBaseService.Collection.AsQueryable())
                     {
-                        var pressureValue = (float)pomiar.GetType().GetProperty($"Pressure{seriesIndex}").GetValue(pomiar);
+                        var pressureValue = (float)pomiar.GetType().GetProperty($"Pressure{seriesIndex + 1}").GetValue(pomiar);
                         //_PressureSeries[seriesIndex].Points.Add( DateTimeAxis.CreateDataPoint(pomiar.Data, pressureValue)
-                        AddPointToBoth(PressureModel, PressureModelCommon, DateTimeAxis.ToDouble(pomiar.Data), pressureValue, seriesIndex);                        
-                    }                    
+                        AddPointToBoth(PressureModel, PressureModelCommon, DateTimeAxis.ToDouble(pomiar.Data), pressureValue, seriesIndex);
+                    }
                 }
 
-                
+
                 foreach (var pomiar in _dataBaseService.Collection.AsQueryable())
                 {
                     var weightValue = (float)pomiar.GetType().GetProperty($"Weight").GetValue(pomiar);
                     // _WeightSeries.Points.Add( DateTimeAxis.CreateDataPoint(pomiar.Data, weightValue)
                     AddPointToBoth(WeightModel, WeightModelCommon, DateTimeAxis.ToDouble(pomiar.Data), weightValue, 0);
-                    
+
                 }
 
                 TemperatureModel.InvalidatePlot(true);
@@ -336,7 +337,7 @@ namespace SensorMonitor.ViewModels
                 PressureModel.InvalidatePlot(true);
                 PressureModelCommon.InvalidatePlot(true);
                 WeightModel.InvalidatePlot(true);
-                WeightModelCommon.InvalidatePlot(true);             
+                WeightModelCommon.InvalidatePlot(true);
 
             }
         }
@@ -345,8 +346,8 @@ namespace SensorMonitor.ViewModels
         {
             for (int seriesIndex = 0; seriesIndex < _TemperatureSeries.Length; seriesIndex++)
             {
-                _TemperatureSeries[seriesIndex] = new LineSeries { Title = $"Temp. {seriesIndex+1}", IsVisible = true };
-                this.TemperatureModel.Series.Add(_TemperatureSeries[seriesIndex]);               
+                _TemperatureSeries[seriesIndex] = new LineSeries { Title = $"Temp. {seriesIndex + 1}", IsVisible = true };
+                this.TemperatureModel.Series.Add(_TemperatureSeries[seriesIndex]);
             }
         }
 
@@ -354,9 +355,9 @@ namespace SensorMonitor.ViewModels
         {
             for (int seriesIndex = 0; seriesIndex < _PressureSeries.Length; seriesIndex++)
             {
-                _PressureSeries[seriesIndex] = new LineSeries { Title = $"Ciśnienie {seriesIndex+1}", IsVisible = true };
+                _PressureSeries[seriesIndex] = new LineSeries { Title = $"Ciśnienie {seriesIndex + 1}", IsVisible = true };
                 this.PressureModel.Series.Add(_PressureSeries[seriesIndex]);
-             }
+            }
         }
 
 
@@ -419,7 +420,7 @@ namespace SensorMonitor.ViewModels
         private void InitializeWeightPlot()
         {
             this.WeightModel = new PlotModel
-            {               
+            {
                 IsLegendVisible = false,
             };
 
@@ -437,7 +438,7 @@ namespace SensorMonitor.ViewModels
                 IsZoomEnabled = false,
                 IsPanEnabled = false
             });
-        }        
+        }
 
         private void PlcService_OnConnectionStatusChanged(string status) // Aktualizacja statusu połączenia z PLC
         {
@@ -473,22 +474,22 @@ namespace SensorMonitor.ViewModels
             {
                 _DBWriteTicksCounter = 0; // Reset licznika
             }
-      }
+        }
 
         private void UpdatePlotsAfterPLCDataRcv()
         {
             for (int i = 0; i < _TemperatureSeries.Length; i++)
             {
                 //_TemperatureSeries[i].Points.Add(new DataPoint( DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Temperature[i] ));
-                AddPointToBoth(TemperatureModel, TemperatureModelCommon, DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Temperature[i],i);
-               
+                AddPointToBoth(TemperatureModel, TemperatureModelCommon, DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Temperature[i], i);
+
             }
             this.TemperatureModel.InvalidatePlot(true);
             TemperatureModelCommon.InvalidatePlot(true);
 
             for (int i = 0; i < _PressureSeries.Length; i++)
             {
-               // _PressureSeries[i].Points.Add(new DataPoint(DateTimeAxis.ToDouble(DateTime.Now),_plcConnectionService.Pressure[i] ));
+                // _PressureSeries[i].Points.Add(new DataPoint(DateTimeAxis.ToDouble(DateTime.Now),_plcConnectionService.Pressure[i] ));
                 AddPointToBoth(PressureModel, PressureModelCommon, DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Pressure[i], i);
             }
             this.PressureModel.InvalidatePlot(true);
@@ -520,12 +521,12 @@ namespace SensorMonitor.ViewModels
                 Pressure1 = (float)Math.Round(_plcConnectionService.Pressure[0], 1),
                 Pressure2 = (float)Math.Round(_plcConnectionService.Pressure[1], 1),
                 Weight = (float)Math.Round(_plcConnectionService.Weight, 1)
-            }); 
+            });
         }
 
-       
 
-        
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string name = null)
@@ -573,7 +574,7 @@ namespace SensorMonitor.ViewModels
             }
         }
     }
-   
+
     public class NotConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

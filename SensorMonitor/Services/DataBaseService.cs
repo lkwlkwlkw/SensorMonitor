@@ -8,7 +8,7 @@ namespace SensorMonitor.Services
     {
         private DataStore _dataStore;
         public IDocumentCollection<Pomiar> Collection;
-    //    private bool _StorageInitialized = false;
+        //    private bool _StorageInitialized = false;
 
         public class Pomiar
         {
@@ -17,7 +17,7 @@ namespace SensorMonitor.Services
             public float Temp2 { get; set; }
             public float Temp3 { get; set; }
             public float Temp4 { get; set; }
-            public float Temp5{ get; set; }
+            public float Temp5 { get; set; }
             public float Temp6 { get; set; }
             public float Temp7 { get; set; }
             public float Temp8 { get; set; }
@@ -33,9 +33,9 @@ namespace SensorMonitor.Services
         public void CreateNewFile()
         {
             Directory.CreateDirectory(@"C:\Raporty");
-            _dataStore = new DataStore( $@"C:\Raporty\Raport_{DateTime.Now:yyyyMMddHHmm}.json");
+            _dataStore = new DataStore($@"C:\Raporty\Raport_{DateTime.Now:yyyyMMddHHmm}.json");
             Collection = _dataStore.GetCollection<Pomiar>("Pomiary");
-         }
+        }
 
         public Boolean OpenExistingFile(string filePath)
         {
@@ -57,18 +57,18 @@ namespace SensorMonitor.Services
                     DefaultButton = ContentDialogButton.Primary
                 };
                 dialog.ShowAsync();
-                return false;                
-            }            
+                return false;
+            }
         }
 
         public void SavePomiar(Pomiar pomiar)
         {
             Collection?.InsertOneAsync(pomiar);
         }
-       
+
         public void DatabaseClose()
         {
-            _dataStore?.Dispose();         
+            _dataStore?.Dispose();
         }
     }
 }

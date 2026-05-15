@@ -1,11 +1,7 @@
 ﻿using OxyPlot;
 using OxyPlot.Axes;
-using OxyPlot.Series;
 using OxyPlot.Legends;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+using OxyPlot.Series;
 
 namespace SensorMonitor
 {
@@ -21,7 +17,7 @@ namespace SensorMonitor
                 PlotAreaBorderColor = original.PlotAreaBorderColor,
                 PlotAreaBorderThickness = original.PlotAreaBorderThickness,
                 IsLegendVisible = original.IsLegendVisible,
-                Legends= { new Legend { LegendPosition = LegendPosition.TopRight } }
+                Legends = { new Legend { LegendPosition = LegendPosition.TopRight } }
 
             };
 
@@ -44,13 +40,13 @@ namespace SensorMonitor
             switch (s)
             {
                 case LineSeries ls:
-                   
+
                     return CloneLineSeries(ls);
-                    
+
                 case ScatterSeries ss:
                     return CloneScatterSeries(ss);
 
-                
+
 
                 case BarSeries bs:
                     return CloneBarSeries(bs);
@@ -147,7 +143,7 @@ namespace SensorMonitor
             copy.MinorGridlineStyle = original.MinorGridlineStyle;
             copy.StringFormat = original.StringFormat;
             copy.IsZoomEnabled = original.IsZoomEnabled;
-            copy.IsPanEnabled = original.IsPanEnabled;            
+            copy.IsPanEnabled = original.IsPanEnabled;
             return copy;
         }
     }

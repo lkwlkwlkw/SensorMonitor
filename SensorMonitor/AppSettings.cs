@@ -1,8 +1,8 @@
 ﻿namespace SensorMonitor;
 
-    public class AppSettings
+public class AppSettings
 {
-    public string ConnectionAddress { get; set; } 
+    public string ConnectionAddress { get; set; }
     public int PLCPollingInterval { get; set; }
     public int SaveToDBInterval { get; set; }
     public NodeIds NodeIds { get; set; }
@@ -33,7 +33,7 @@ public class ScaleFactors
     public double TemperatureMax { get; set; }
     public double TemperatureMin { get; set; }
     public double PressureMax { get; set; }
-    public double PressureMin { get; set; }   
+    public double PressureMin { get; set; }
     public double WeightMax { get; set; }
     public double WeightMin { get; set; }
 }

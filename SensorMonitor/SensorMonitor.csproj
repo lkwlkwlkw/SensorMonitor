@@ -14,10 +14,13 @@
 	<AssemblyVersion>1.0.0.1</AssemblyVersion>
 	<FileVersion>1.0.0.1</FileVersion>
 	<Version>1.0.0.1</Version>
-  </PropertyGroup>
+	  <EnableInterceptors>true</EnableInterceptors>
+	  <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.Extensions.Configuration.Binder.SourceGeneration</InterceptorsNamespaces>
+   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Fasticon-Comic-Iphone-Graph.ico" />
+    <None Remove="Images\background1.jpeg" />
     <None Remove="Images\S7ExpertLogo.png" />
   </ItemGroup>
 
@@ -30,9 +33,9 @@
     <PackageReference Include="LinkDotNet.BuildInformation" Version="2.1.2" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
     <PackageReference Include="Material.Icons.WPF" Version="3.0.2" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
 	 
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.8" />
 	 
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
 	 
@@ -42,12 +45,15 @@
 	 
     <PackageReference Include="TaskScheduler" Version="2.12.2" />
 	 
-    <PackageReference Include="WindowsAPICodePack" Version="8.0.15.1" />
+    <PackageReference Include="WindowsAPICodePack" Version="8.0.15.2" />
 	 
     <PackageReference Include="Workstation.UaClient" Version="3.2.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\background1.jpeg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\Fasticon-Comic-Iphone-Graph.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

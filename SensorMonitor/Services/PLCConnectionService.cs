@@ -13,7 +13,7 @@ namespace SensorMonitor.Services
         public event Action OnDataReceived;
         public event Action<string> ConnectionStatusChanged;
 
-        private float[] _Temperature  = new float[12];
+        private float[] _Temperature = new float[12];
         public float[] Temperature { get => _Temperature; }
 
         private float[] _Pressure = new float[2];
@@ -28,7 +28,7 @@ namespace SensorMonitor.Services
         public PLCConnectionService(IOptionsMonitor<AppSettings> options)
         {
             _settings = options.CurrentValue;
-        
+
         }
 
         private async Task Connect()
@@ -56,7 +56,7 @@ namespace SensorMonitor.Services
                 Debug.WriteLine($"SecurityMode: '{channel.RemoteEndpoint.SecurityMode}'.");
                 Debug.WriteLine($"UserIdentityToken: '{channel.UserIdentity}'.");
 
-               StartReadingData();
+                StartReadingData();
             }
             catch (Exception ex)
             {
@@ -125,15 +125,15 @@ namespace SensorMonitor.Services
                         NodeId = NodeId.Parse(_settings.NodeIds.T12),
                         AttributeId = AttributeIds.Value
                     },
-                    
 
 
-                    
+
+
                      new ReadValueId {
                         NodeId = NodeId.Parse(_settings.NodeIds.P1),
                         AttributeId = AttributeIds.Value
                     },
-                     
+
                       new ReadValueId {
                         NodeId = NodeId.Parse(_settings.NodeIds.P2),
                         AttributeId = AttributeIds.Value
@@ -143,7 +143,7 @@ namespace SensorMonitor.Services
                         NodeId = NodeId.Parse(_settings.NodeIds.W1),
                         AttributeId = AttributeIds.Value
                     },
-                    
+
                 }
             };
 
@@ -151,22 +151,22 @@ namespace SensorMonitor.Services
             {
                 try
                 {
-                    var readResult = await channel!.ReadAsync(readRequest);                   
+                    var readResult = await channel!.ReadAsync(readRequest);
 
                     for (int i = 0; i < 12; i++)
                     {
                         _Temperature[i] = (float)(readResult.Results[i].Value ?? 0.0);
                     }
 
-                    _Pressure[0] = (float)(readResult.Results[12].Value ?? 0.0) ;
-                    _Pressure[1] = (float)(readResult.Results[13].Value ?? 0.0) ;
-                    _Weight = (float)(readResult.Results[14].Value ?? 0.0) ;
+                    _Pressure[0] = (float)(readResult.Results[12].Value ?? 0.0);
+                    _Pressure[1] = (float)(readResult.Results[13].Value ?? 0.0);
+                    _Weight = (float)(readResult.Results[14].Value ?? 0.0);
 
-                    OnDataReceived?.Invoke();                    
+                    OnDataReceived?.Invoke();
 
-                   
 
-                    await Task.Delay(_settings.PLCPollingInterval*1000);// Opóźnienie między kolejnymi odczytami danych z PLC
+
+                    await Task.Delay(_settings.PLCPollingInterval * 1000);// Opóźnienie między kolejnymi odczytami danych z PLC
                 }
                 catch (Exception ex)
                 {
@@ -198,7 +198,7 @@ namespace SensorMonitor.Services
         }
 
 
-        }
+    }
 }
 
 
