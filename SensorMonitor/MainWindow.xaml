@@ -57,15 +57,13 @@
                     </StackPanel>
                 </TabItem.Header>
 
-
-
                 <Grid ClipToBounds="True">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
                         <!--  Górny: maksymalna dostępna wysokość  -->
-                        <RowDefinition Height="*" MinHeight="80" />
+                        <RowDefinition Height="*"  />
                         <!--  Środkowy: 60  -->
-                        <RowDefinition Height="70" />
+                        <RowDefinition Height="70" MinHeight="70"/>
                         <!--  Dolny: 60  -->
                     </Grid.RowDefinitions>
 
@@ -163,15 +161,13 @@
 
                     <Viewbox
                         Grid.Row="0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top">
-                        <Canvas Width="790" Margin="5,10,5,10">
+                        Stretch="Uniform">
+                        <Canvas Width="790" Height="170" Margin="5,10,5,10">
 
                             <Image
                                 Width="790"
-                                HorizontalAlignment="Stretch"
                                 Source="/Images/background1.jpeg"
-                                Stretch="UniformToFill" />
+                                 />
 
                             <ui:SimpleStackPanel
                                 Canvas.Left="100"
@@ -310,7 +306,8 @@
                     <Grid
                         Grid.Row="1"
                         Margin="25,0,0,5"
-                        VerticalAlignment="Bottom">
+                        VerticalAlignment="Top"
+                        Background="Bisque">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <!--  Wiersz 1  -->

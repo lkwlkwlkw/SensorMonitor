@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="23.6" version="23.6" Modules="simple" RootPath="." Language="en" Id="{5FE3F2A8-DC24-4285-A37B-B39E0C4DA85A}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="23.6" version="23.7" Modules="simple" RootPath="." Language="en" Id="{5FE3F2A8-DC24-4285-A37B-B39E0C4DA85A}">
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="ALLUSERS" Value="1"/>
