@@ -25,6 +25,10 @@ namespace SensorMonitor.Services
             public float Temp10 { get; set; }
             public float Temp11 { get; set; }
             public float Temp12 { get; set; }
+            public float Temp13 { get; set; }
+            public float Temp14 { get; set; }
+            public float Temp15 { get; set; }
+            public float Temp16 { get; set; }
             public float Pressure1 { get; set; }
             public float Pressure2 { get; set; }
             public float Weight { get; set; }

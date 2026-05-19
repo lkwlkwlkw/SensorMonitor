@@ -31,8 +31,8 @@ namespace SensorMonitor.ViewModels
         private CommonOpenFileDialog dialog = new CommonOpenFileDialog();
         private readonly PLCConnectionService _plcConnectionService;
         private readonly DataBaseService _dataBaseService;
-        private LineSeries[] _TemperatureSeries = new LineSeries[12]; // Tablica serii dla 12 temperatur
-        private LineSeries[] _PressureSeries = new LineSeries[2]; // Tablica serii dla 12 ciśnień
+        private LineSeries[] _TemperatureSeries = new LineSeries[16]; // Tablica serii dla 16 temperatur
+        private LineSeries[] _PressureSeries = new LineSeries[2]; // Tablica serii dla 2 ciśnień
         private LineSeries _WeightSeries = new(); // Seria dla wagi
         public ICommand ClickStartCommand { get; }
         public ICommand ClickStopCommand { get; }
@@ -45,7 +45,7 @@ namespace SensorMonitor.ViewModels
         private DispatcherTimer _timer = new DispatcherTimer();
         private DateTime _startTime;
         public ObservableCollection<string> Temperature { get; } =
-        new ObservableCollection<string> { "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0" };
+        new ObservableCollection<string> { "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0" };
         public ObservableCollection<string> Pressure { get; } =
           new ObservableCollection<string> { "0.0", "0.0" };
         public string _Weight = "0.0";
@@ -298,14 +298,10 @@ namespace SensorMonitor.ViewModels
             if (_dataBaseService.OpenExistingFile(filePath)) // Wczytanie danych z wybranego pliku bazy danych
             {
                 for (int seriesIndex = 0; seriesIndex < _TemperatureSeries.Length; seriesIndex++)
-                {
-                    //  _TemperatureSeries[seriesIndex] = new LineSeries { Title = $"Temperature {seriesIndex}", IsVisible = true };
-
-                    // _TemperatureSeries[seriesIndex].Points.Clear(); // Wyczyść istniejące punkty przed dodaniem nowych danych z bazy
+                {                    
                     foreach (var pomiar in _dataBaseService.Collection.AsQueryable())
                     {
                         var temperatureValue = (float)pomiar.GetType().GetProperty($"Temp{seriesIndex + 1}").GetValue(pomiar);
-                        // _TemperatureSeries[seriesIndex].Points.Add(DateTimeAxis.CreateDataPoint(pomiar.Data, temperatureValue)
                         AddPointToBoth(TemperatureModel, TemperatureModelCommon, DateTimeAxis.ToDouble(pomiar.Data), temperatureValue, seriesIndex);
                     }
 
@@ -318,16 +314,13 @@ namespace SensorMonitor.ViewModels
                     foreach (var pomiar in _dataBaseService.Collection.AsQueryable())
                     {
                         var pressureValue = (float)pomiar.GetType().GetProperty($"Pressure{seriesIndex + 1}").GetValue(pomiar);
-                        //_PressureSeries[seriesIndex].Points.Add( DateTimeAxis.CreateDataPoint(pomiar.Data, pressureValue)
                         AddPointToBoth(PressureModel, PressureModelCommon, DateTimeAxis.ToDouble(pomiar.Data), pressureValue, seriesIndex);
                     }
                 }
 
-
                 foreach (var pomiar in _dataBaseService.Collection.AsQueryable())
                 {
                     var weightValue = (float)pomiar.GetType().GetProperty($"Weight").GetValue(pomiar);
-                    // _WeightSeries.Points.Add( DateTimeAxis.CreateDataPoint(pomiar.Data, weightValue)
                     AddPointToBoth(WeightModel, WeightModelCommon, DateTimeAxis.ToDouble(pomiar.Data), weightValue, 0);
 
                 }

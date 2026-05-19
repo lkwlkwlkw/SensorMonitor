@@ -24,6 +24,10 @@ public class NodeIds
     public string T10 { get; set; }
     public string T11 { get; set; }
     public string T12 { get; set; }
+    public string T13 { get; set; }
+    public string T14 { get; set; }
+    public string T15 { get; set; }
+    public string T16 { get; set; }
     public string P1 { get; set; }
     public string P2 { get; set; }
     public string W1 { get; set; }

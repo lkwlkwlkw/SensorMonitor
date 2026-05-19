@@ -38,7 +38,10 @@
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
-        <StatusBar Height="24" DockPanel.Dock="Bottom">
+        <StatusBar
+            Name="StatusBar"
+            Height="24"
+            DockPanel.Dock="Bottom">
             <StatusBarItem>
                 <TextBlock Text="{Binding ConnectionStatusText}" />
             </StatusBarItem>
@@ -61,9 +64,9 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
                         <!--  Górny: maksymalna dostępna wysokość  -->
-                        <RowDefinition Height="*"  />
+                        <RowDefinition Height="*" />
                         <!--  Środkowy: 60  -->
-                        <RowDefinition Height="70" MinHeight="70"/>
+                        <RowDefinition Height="70" MinHeight="70" />
                         <!--  Dolny: 60  -->
                     </Grid.RowDefinitions>
 
@@ -159,19 +162,17 @@
                             Text="{Binding CycleStartText}" />
                     </ui:SimpleStackPanel>
 
-                    <Viewbox
-                        Grid.Row="0"
-                        Stretch="Uniform">
-                        <Canvas Width="790" Height="170" Margin="5,10,5,10">
+                    <Viewbox Grid.Row="0" Stretch="Uniform">
+                        <Canvas
+                            Width="790"
+                            Height="170"
+                            Margin="5,10,5,10">
 
-                            <Image
-                                Width="790"
-                                Source="/Images/background1.jpeg"
-                                 />
+                            <Image Width="790" Source="/Images/background1.jpeg" />
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="100"
-                                Canvas.Top="116"
+                                Canvas.Left="25"
+                                Canvas.Top="100"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
                                 Orientation="Vertical">
@@ -180,7 +181,7 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="150"
+                                Canvas.Left="50"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="T2" />
@@ -188,7 +189,7 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="200"
+                                Canvas.Left="75"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="T3" />
@@ -196,7 +197,7 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="250"
+                                Canvas.Left="100"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="T4" />
@@ -204,7 +205,7 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="300"
+                                Canvas.Left="125"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="T5" />
@@ -212,7 +213,7 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="350"
+                                Canvas.Left="150"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="T6" />
@@ -220,7 +221,7 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="400"
+                                Canvas.Left="175"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="T7" />
@@ -228,32 +229,24 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="400"
-                                Canvas.Top="100"
-                                Orientation="Vertical">
-                                <TextBlock Background="LightGray" Text="T7" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[6]}" />
-                            </ui:SimpleStackPanel>
-
-                            <ui:SimpleStackPanel
-                                Canvas.Left="400"
+                                Canvas.Left="200"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="T8" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[7]}" />
                             </ui:SimpleStackPanel>
 
-
                             <ui:SimpleStackPanel
-                                Canvas.Left="450"
+                                Canvas.Left="225"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="T9" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[8]}" />
                             </ui:SimpleStackPanel>
 
+
                             <ui:SimpleStackPanel
-                                Canvas.Left="500"
+                                Canvas.Left="250"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="T10" />
@@ -261,7 +254,7 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="550"
+                                Canvas.Left="275"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="T11" />
@@ -269,7 +262,7 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="600"
+                                Canvas.Left="325"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="T12" />
@@ -277,7 +270,39 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="650"
+                                Canvas.Left="350"
+                                Canvas.Top="100"
+                                Orientation="Vertical">
+                                <TextBlock Background="LightGray" Text="T13" />
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[12]}" />
+                            </ui:SimpleStackPanel>
+
+                            <ui:SimpleStackPanel
+                                Canvas.Left="375"
+                                Canvas.Top="100"
+                                Orientation="Vertical">
+                                <TextBlock Background="LightGray" Text="T14" />
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[13]}" />
+                            </ui:SimpleStackPanel>
+
+                            <ui:SimpleStackPanel
+                                Canvas.Left="400"
+                                Canvas.Top="100"
+                                Orientation="Vertical">
+                                <TextBlock Background="LightGray" Text="T15" />
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[14]}" />
+                            </ui:SimpleStackPanel>
+
+                            <ui:SimpleStackPanel
+                                Canvas.Left="475"
+                                Canvas.Top="100"
+                                Orientation="Vertical">
+                                <TextBlock Background="LightGray" Text="T16" />
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[15]}" />
+                            </ui:SimpleStackPanel>
+
+                            <ui:SimpleStackPanel
+                                Canvas.Left="500"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="P1" />
@@ -285,7 +310,7 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="700"
+                                Canvas.Left="525"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="P2" />
@@ -293,7 +318,7 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="750"
+                                Canvas.Left="550"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="W" />
@@ -305,9 +330,9 @@
 
                     <Grid
                         Grid.Row="1"
-                        Margin="25,0,0,5"
+                        Margin="10,0,10,0"
                         VerticalAlignment="Top"
-                        Background="Bisque">
+                        Background="{Binding ElementName=StatusBar, Path=Background}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <!--  Wiersz 1  -->
@@ -332,7 +357,19 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </Grid.Resources>
+
+
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="0"
@@ -414,9 +451,110 @@
                             Grid.Row="1"
                             Grid.Column="8"
                             Text="{Binding Temperature[8]}" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="9"
+                            FontWeight="Bold"
+                            Text="T10" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="9"
+                            Text="{Binding Temperature[9]}" />
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="10"
+                            FontWeight="Bold"
+                            Text="T11" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="10"
+                            Text="{Binding Temperature[10]}" />
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="11"
+                            FontWeight="Bold"
+                            Text="T12" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="11"
+                            Text="{Binding Temperature[11]}" />
+
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="12"
+                            FontWeight="Bold"
+                            Text="T13" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="12"
+                            Text="{Binding Temperature[12]}" />
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="13"
+                            FontWeight="Bold"
+                            Text="T14" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="13"
+                            Text="{Binding Temperature[13]}" />
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="14"
+                            FontWeight="Bold"
+                            Text="T15" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="14"
+                            Text="{Binding Temperature[14]}" />
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="15"
+                            FontWeight="Bold"
+                            Text="T16" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="15"
+                            Text="{Binding Temperature[15 ]}" />
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="16"
+                            FontWeight="Bold"
+                            Text="P1" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="16"
+                            Text="{Binding Pressure[0]}" />
+
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="17"
+                            FontWeight="Bold"
+                            Text="P2" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="17"
+                            Text="{Binding Pressure[1]}" />
+
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="18"
+                            FontWeight="Bold"
+                            Text="W1" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="18"
+                            Text="{Binding WeightText}" />
 
                     </Grid>
-
                 </Grid>
 
 

@@ -13,7 +13,7 @@ namespace SensorMonitor.Services
         public event Action OnDataReceived;
         public event Action<string> ConnectionStatusChanged;
 
-        private float[] _Temperature = new float[12];
+        private float[] _Temperature = new float[16];
         public float[] Temperature { get => _Temperature; }
 
         private float[] _Pressure = new float[2];
@@ -125,10 +125,22 @@ namespace SensorMonitor.Services
                         NodeId = NodeId.Parse(_settings.NodeIds.T12),
                         AttributeId = AttributeIds.Value
                     },
-
-
-
-
+                    new ReadValueId {
+                        NodeId = NodeId.Parse(_settings.NodeIds.T13),
+                        AttributeId = AttributeIds.Value
+                    },
+                    new ReadValueId {
+                        NodeId = NodeId.Parse(_settings.NodeIds.T14),
+                        AttributeId = AttributeIds.Value
+                    },
+                    new ReadValueId {
+                        NodeId = NodeId.Parse(_settings.NodeIds.T15),
+                        AttributeId = AttributeIds.Value
+                    },
+                    new ReadValueId {
+                        NodeId = NodeId.Parse(_settings.NodeIds.T16),
+                        AttributeId = AttributeIds.Value
+                    },
                      new ReadValueId {
                         NodeId = NodeId.Parse(_settings.NodeIds.P1),
                         AttributeId = AttributeIds.Value
@@ -153,7 +165,7 @@ namespace SensorMonitor.Services
                 {
                     var readResult = await channel!.ReadAsync(readRequest);
 
-                    for (int i = 0; i < 12; i++)
+                    for (int i = 0; i < 16; i++)
                     {
                         _Temperature[i] = (float)(readResult.Results[i].Value ?? 0.0);
                     }
