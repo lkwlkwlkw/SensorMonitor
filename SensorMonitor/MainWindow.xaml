@@ -171,11 +171,12 @@
                             <Image Width="790" Source="/Images/background1.jpeg" />
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="25"
+                                Canvas.Left="15"
                                 Canvas.Top="100"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T1" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[0]}" />
                             </ui:SimpleStackPanel>
@@ -183,126 +184,141 @@
                             <ui:SimpleStackPanel
                                 Canvas.Left="50"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T2" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[1]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="75"
+                                Canvas.Left="85"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T3" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[2]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="100"
+                                Canvas.Left="120"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T4" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[3]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="125"
+                                Canvas.Left="155"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T5" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[4]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="150"
+                                Canvas.Left="190"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T6" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[5]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="175"
+                                Canvas.Left="225"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T7" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[6]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="200"
+                                Canvas.Left="260"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T8" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[7]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="225"
+                                Canvas.Left="295"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T9" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[8]}" />
                             </ui:SimpleStackPanel>
 
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="250"
+                                Canvas.Left="330"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T10" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[9]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="275"
+                                Canvas.Left="365"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T11" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[10]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="325"
+                                Canvas.Left="400"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T12" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[11]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="350"
+                                Canvas.Left="435"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T13" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[12]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="375"
+                                Canvas.Left="470"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T14" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[13]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="400"
+                                Canvas.Left="505"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T15" />
                                 <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[14]}" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="475"
+                                Canvas.Left="540"
                                 Canvas.Top="100"
-                                Orientation="Vertical">
+                                Orientation="Vertical"
+                                Width="25">
                                 <TextBlock Background="LightGray" Text="T16" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[15]}" />
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[15]}"  />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="500"
+                                Canvas.Left="575"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="P1" />
@@ -310,7 +326,7 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="525"
+                                Canvas.Left="625"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="P2" />
@@ -318,7 +334,7 @@
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
-                                Canvas.Left="550"
+                                Canvas.Left="675"
                                 Canvas.Top="100"
                                 Orientation="Vertical">
                                 <TextBlock Background="LightGray" Text="W" />

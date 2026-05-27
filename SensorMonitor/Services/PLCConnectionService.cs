@@ -170,9 +170,9 @@ namespace SensorMonitor.Services
                         _Temperature[i] = (float)(readResult.Results[i].Value ?? 0.0);
                     }
 
-                    _Pressure[0] = (float)(readResult.Results[12].Value ?? 0.0);
-                    _Pressure[1] = (float)(readResult.Results[13].Value ?? 0.0);
-                    _Weight = (float)(readResult.Results[14].Value ?? 0.0);
+                    _Pressure[0] = (float)(readResult.Results[16].Value ?? 0.0);
+                    _Pressure[1] = (float)(readResult.Results[17].Value ?? 0.0);
+                    _Weight = (float)(readResult.Results[18].Value ?? 0.0);
 
                     OnDataReceived?.Invoke();
 
