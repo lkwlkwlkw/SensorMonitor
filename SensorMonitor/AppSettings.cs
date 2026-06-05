@@ -31,6 +31,8 @@ public class NodeIds
     public string P1 { get; set; }
     public string P2 { get; set; }
     public string W1 { get; set; }
+    public string DegassingTime { get; set; }
+    public string DegassingStart { get; set; }
 }
 public class ScaleFactors
 {

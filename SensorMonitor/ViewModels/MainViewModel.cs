@@ -25,9 +25,10 @@ namespace SensorMonitor.ViewModels
         public PlotModel TemperatureModel { get; private set; }
         public PlotModel PressureModel { get; private set; }
         public PlotModel WeightModel { get; private set; }
-        public PlotModel TemperatureModelCommon { get; private set; }
+        public PlotModel TemperatureModelCommon { get; private set; } //model na wspólnej zakładce, który będzie klonem modelu z głównej zakładki, ale bez widocznych osi X i Y, żeby wyglądał jakby był częścią tego samego wykresu, a nie osobnym modelem
         public PlotModel PressureModelCommon { get; private set; }
         public PlotModel WeightModelCommon { get; private set; }
+        public PlotModel TemperatureModelMain { get; private set; }
         private CommonOpenFileDialog dialog = new CommonOpenFileDialog();
         private readonly PLCConnectionService _plcConnectionService;
         private readonly DataBaseService _dataBaseService;
@@ -38,10 +39,15 @@ namespace SensorMonitor.ViewModels
         public ICommand ClickStopCommand { get; }
         public ICommand ClickPlotFormatCommand { get; }
         public ICommand ClickOpenFileCommand { get; }
+        public ICommand ClickDegassing { get; }
         private string _CycleDurationText = "00:00:00";
         private string _CycleStartText = "00:00:00";
         private string _CycleStartTextFileName;
         private string _ConnectionStatusText = "Brak połączenia";
+        private string _OrderNameText = "Zlecenie";
+        private float _WeightChange = 0;
+        private float _oldWeight = 0;
+        private UInt32 _DegassingTime=30;
         private DispatcherTimer _timer = new DispatcherTimer();
         private DateTime _startTime;
         public ObservableCollection<string> Temperature { get; } =
@@ -118,6 +124,37 @@ namespace SensorMonitor.ViewModels
             }
         }
 
+        public string OrderNameText
+        {
+            get { return _OrderNameText; }
+            set
+            {
+                _OrderNameText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string ZmianaWagiText
+        {
+            get { return _WeightChange.ToString("F0"); }
+            set
+            {
+                _WeightChange = float.Parse(value);
+                OnPropertyChanged();
+            }
+        }
+
+        public UInt32 DegassingTime
+        {
+            get { return _DegassingTime; }
+            set
+            {
+                _DegassingTime=value;
+                OnPropertyChanged();
+            }
+        }
+
+
         public string AssemblyVersion
         {
             get { return BuildInformation.AssemblyVersion; }
@@ -136,6 +173,7 @@ namespace SensorMonitor.ViewModels
             ClickStopCommand = new RelayCommand(OnStopClick);
             ClickPlotFormatCommand = new RelayCommand(OnClickPlotFormat);
             ClickOpenFileCommand = new RelayCommand(OnClickOpenFile);
+            ClickDegassing = new RelayCommand(OnClickDegassing);
             _dataBaseService = Data; // Iniekcja zależności usługi bazy danych                                    
 
             InitializePressurePlot();
@@ -147,6 +185,7 @@ namespace SensorMonitor.ViewModels
             PressureModelCommon = OxyPlotCloner.CloneModel(PressureModel);
             WeightModelCommon = OxyPlotCloner.CloneModel(WeightModel);
             TemperatureModelCommon = OxyPlotCloner.CloneModel(TemperatureModel);
+            TemperatureModelMain = OxyPlotCloner.CloneModel(TemperatureModel);
             // TemperatureModelCommon.Axes[0].IsAxisVisible = false;
             //  PressureModelCommon.Axes[0].IsAxisVisible = false;
             WeightModelCommon.Axes[0].TextColor = OxyColors.Transparent;
@@ -169,9 +208,11 @@ namespace SensorMonitor.ViewModels
             StopButtonEnabled = true;
             if (_DBWriteActive)
                 return;
-
+            _oldWeight = 0; // Reset zmiany wagi przy każdym rozpoczęciu pomiaru
+            _WeightChange = 0;
             ResetPlotAndClearPoints(TemperatureModel, true);
             ResetPlotAndClearPoints(TemperatureModelCommon, true);
+            ResetPlotAndClearPoints(TemperatureModelMain, true);
             ResetPlotAndClearPoints(PressureModel, true);
             ResetPlotAndClearPoints(PressureModelCommon, true);
             ResetPlotAndClearPoints(WeightModel, true);
@@ -185,7 +226,7 @@ namespace SensorMonitor.ViewModels
                 CycleDurationText = _CycleTime.ToString(@"hh\:mm\:ss");
             };
             _timer.Start();
-            _dataBaseService.CreateNewFile(); // Tworzenie nowego pliku bazy danych przy każdym rozpoczęciu pomiaru
+            _dataBaseService.CreateNewFile(_OrderNameText); // Tworzenie nowego pliku bazy danych przy każdym rozpoczęciu pomiaru
             _DBWriteActive = true;
             CycleStartText = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
             _CycleStartTextFileName = DateTime.Now.ToString("yyyyMMdd_HHmmss");
@@ -230,6 +271,7 @@ namespace SensorMonitor.ViewModels
             TemperatureModelCommon.ResetAllAxes();
             PressureModelCommon.ResetAllAxes();
             WeightModelCommon.ResetAllAxes();
+            TemperatureModelMain.ResetAllAxes();
 
             TemperatureModel.InvalidatePlot(true);
             PressureModel.InvalidatePlot(true);
@@ -237,6 +279,7 @@ namespace SensorMonitor.ViewModels
             TemperatureModelCommon.InvalidatePlot(true);
             PressureModelCommon.InvalidatePlot(true);
             WeightModelCommon.InvalidatePlot(true);
+            TemperatureModelMain.InvalidatePlot(true);
         }
 
         private void OnClickOpenFile(object obj) // Otwieranie pliku bazy danych
@@ -253,21 +296,28 @@ namespace SensorMonitor.ViewModels
             }
         }
 
+        private void OnClickDegassing(object obj)
+        {
+            var itemsToSend = new List<(string nodeId, object value)>
+            {
+             (_settings.NodeIds.DegassingStart, true),
+             (_settings.NodeIds.DegassingTime, _DegassingTime),
+             
+             };
+
+            _plcConnectionService.WriteData(itemsToSend);
+        }
+
         #endregion
 
 
         public void AddPointToBoth(PlotModel original, PlotModel clone, double x, double y, int SerieNumber)
         {
             var p = new DataPoint(x, y);
-
             var s1 = (LineSeries)original.Series[SerieNumber];
             var s2 = (LineSeries)clone.Series[SerieNumber];
-
             s1.Points.Add(p);
             s2.Points.Add(new DataPoint(x, y));
-
-            //  original.InvalidatePlot(true);
-            //  clone.InvalidatePlot(true);
         }
 
         public void ResetPlotAndClearPoints(PlotModel model, bool invalidate)
@@ -298,13 +348,12 @@ namespace SensorMonitor.ViewModels
             if (_dataBaseService.OpenExistingFile(filePath)) // Wczytanie danych z wybranego pliku bazy danych
             {
                 for (int seriesIndex = 0; seriesIndex < _TemperatureSeries.Length; seriesIndex++)
-                {                    
+                {
                     foreach (var pomiar in _dataBaseService.Collection.AsQueryable())
                     {
                         var temperatureValue = (float)pomiar.GetType().GetProperty($"Temp{seriesIndex + 1}").GetValue(pomiar);
                         AddPointToBoth(TemperatureModel, TemperatureModelCommon, DateTimeAxis.ToDouble(pomiar.Data), temperatureValue, seriesIndex);
                     }
-
                 }
 
 
@@ -452,18 +501,19 @@ namespace SensorMonitor.ViewModels
         private void PlcService_OnDataReceived() // Aktualizacja danych z PLC i odświeżenie wykresów
         {
             UpdateSensorFields();
+            UpdateWeightChange();
 
             if (!_DBWriteActive && !(_dataBaseService == null))
                 return;
 
-            if (_DBWriteTicksCounter == 0)
+            if (_DBWriteTicksCounter == 0) //wyliczony na podstawie nastawy odczytu PLC i nastawy interwału zapisu do DB
             {
                 UpdatePlotsAfterPLCDataRcv();
                 UpdateDBWrite();
             }
             _DBWriteTicksCounter++;
 
-            if (_DBWriteTicksCounter >= _DBWriteTicksNeeded)
+            if (_DBWriteTicksCounter >= _DBWriteTicksNeeded) //Liczba przy której nastąpi wpis do DB
             {
                 _DBWriteTicksCounter = 0; // Reset licznika
             }
@@ -473,17 +523,19 @@ namespace SensorMonitor.ViewModels
         {
             for (int i = 0; i < _TemperatureSeries.Length; i++)
             {
-                //_TemperatureSeries[i].Points.Add(new DataPoint( DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Temperature[i] ));
                 AddPointToBoth(TemperatureModel, TemperatureModelCommon, DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Temperature[i], i);
-
+                var s1 = (LineSeries)TemperatureModelMain.Series[i];
+                s1.Points.Add(new DataPoint(DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Temperature[i]));
             }
             this.TemperatureModel.InvalidatePlot(true);
             TemperatureModelCommon.InvalidatePlot(true);
+            TemperatureModelMain.InvalidatePlot(true);
 
             for (int i = 0; i < _PressureSeries.Length; i++)
             {
                 // _PressureSeries[i].Points.Add(new DataPoint(DateTimeAxis.ToDouble(DateTime.Now),_plcConnectionService.Pressure[i] ));
                 AddPointToBoth(PressureModel, PressureModelCommon, DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Pressure[i], i);
+
             }
             this.PressureModel.InvalidatePlot(true);
             this.PressureModelCommon.InvalidatePlot(true);
@@ -517,10 +569,6 @@ namespace SensorMonitor.ViewModels
             });
         }
 
-
-
-
-
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -538,6 +586,15 @@ namespace SensorMonitor.ViewModels
             }
 
             WeightText = _plcConnectionService.Weight.ToString("F1");
+        }
+
+        private void UpdateWeightChange()
+        {
+            var _weightChangeBetweenPLCReadings = _plcConnectionService.Weight * 1000 - _oldWeight; //przeskalowanie z kg na gramy
+            _WeightChange = 60 / _settings.PLCPollingInterval * _weightChangeBetweenPLCReadings; //przeskalowanie zmiany wagi między odczytami PLC do zmiany wagi na minutę, czyli (60 sekund / nastawa odczytu PLC) * zmiana wagi między odczytami PLC
+            OnPropertyChanged(nameof(ZmianaWagiText));
+            _oldWeight = _plcConnectionService.Weight * 1000;
+
         }
 
         private bool _closingHandled = false;

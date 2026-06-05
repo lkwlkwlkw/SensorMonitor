@@ -34,10 +34,10 @@ namespace SensorMonitor.Services
             public float Weight { get; set; }
         }
 
-        public void CreateNewFile()
+        public void CreateNewFile(string orderName)
         {
             Directory.CreateDirectory(@"C:\Raporty");
-            _dataStore = new DataStore($@"C:\Raporty\Raport_{DateTime.Now:yyyyMMddHHmm}.json");
+            _dataStore = new DataStore($@"C:\Raporty\{DateTime.Now:yyyyMMddHHmm}_{orderName}.json");
             Collection = _dataStore.GetCollection<Pomiar>("Pomiary");
         }
 

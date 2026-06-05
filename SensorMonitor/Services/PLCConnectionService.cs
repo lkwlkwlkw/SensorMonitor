@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Diagnostics;
+using System.Windows;
 using Workstation.ServiceModel.Ua;
 using Workstation.ServiceModel.Ua.Channels;
 
@@ -173,11 +174,7 @@ namespace SensorMonitor.Services
                     _Pressure[0] = (float)(readResult.Results[16].Value ?? 0.0);
                     _Pressure[1] = (float)(readResult.Results[17].Value ?? 0.0);
                     _Weight = (float)(readResult.Results[18].Value ?? 0.0);
-
                     OnDataReceived?.Invoke();
-
-
-
                     await Task.Delay(_settings.PLCPollingInterval * 1000);// Opóźnienie między kolejnymi odczytami danych z PLC
                 }
                 catch (Exception ex)
@@ -189,6 +186,26 @@ namespace SensorMonitor.Services
                     break;
                 }
             }
+        }
+
+        public async void WriteData(List<(string nodeId, object value)> items)
+        {
+            var writeValues = new List<WriteValue>();
+            foreach (var item in items)
+            {
+                writeValues.Add(new WriteValue
+                {
+                    NodeId = NodeId.Parse(item.nodeId),
+                    AttributeId = AttributeIds.Value,
+                    Value = new DataValue(item.value)
+                });
+            }
+
+            var request = new WriteRequest
+            {
+                NodesToWrite = writeValues.ToArray()
+            };
+            var response = await channel.WriteAsync(request);          
         }
 
         public async void ConnectPLC()

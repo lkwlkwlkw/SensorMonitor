@@ -1,4 +1,5 @@
 ﻿using SensorMonitor.ViewModels;
+using System.Text.RegularExpressions;
 using System.Windows;
 
 
@@ -16,5 +17,12 @@ namespace SensorMonitor
             DataContext = _ViewModel;
         }
 
+        private void TextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            // tylko litery i cyfry
+            Regex regex = new Regex("^[a-zA-Z0-9]+$");
+
+            e.Handled = !regex.IsMatch(e.Text);
+        }
     }
 }
