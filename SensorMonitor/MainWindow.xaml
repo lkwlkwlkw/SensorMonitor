@@ -35,6 +35,7 @@
             <Setter Property="Padding" Value="8,4" />
         </Style>
         <local:NotConverter x:Key="Not" />
+        <local:ContainsAlarmConverter x:Key="ContainsAlarm"/>
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
@@ -503,17 +504,28 @@
                         Grid.Column="0"
                         Model="{Binding TemperatureModelMain}" />
 
-                    <ListView Grid.Row="2" Grid.Column="0" Margin="5,0,5,0">
-                        <ListViewItem Content="Alarm1 " Background="Red"/>
-                        <ListViewItem Content="Alarm2" Background="Red"/>
-                        <ListViewItem Content="Ostrzeżenie1" Background="White"/>
-                        <ListViewItem Content="Alarm4" Background="Red"/>
-                        <ListViewItem Content="Alarm5" Background="Red"/>
+                    <ListView Grid.Row="2" Grid.Column="0" Margin="5,0,5,0" ItemsSource="{Binding AlarmsAndWarningsTextList}" SelectionMode="Single" >
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="25,0,5,0"/>
+                                <Setter Property="Height" Value="20"/>
+                                <!-- możesz dać 18, 16 -->
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+
+                                <Setter Property="Focusable" Value="False"/>
+                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Converter={StaticResource ContainsAlarm}}" Value="True">
+                                        <Setter Property="Background" Value="Red"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
                     </ListView>
                 </Grid>
-
-
-
             </TabItem>
 
             <TabItem Width="130">

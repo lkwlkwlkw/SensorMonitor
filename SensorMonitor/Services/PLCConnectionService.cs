@@ -22,6 +22,13 @@ namespace SensorMonitor.Services
 
         private float _Weight;
         public float Weight { get => _Weight; }
+
+        private UInt32 _Alarms;
+        public UInt32 Alarms { get => _Alarms; }
+
+        private UInt32 _Warnings;
+        public UInt32 Warnings { get => _Warnings; }
+
         public bool IsConnected { get => channel != null && channel.State == CommunicationState.Opened; }
 
 
@@ -156,9 +163,16 @@ namespace SensorMonitor.Services
                         NodeId = NodeId.Parse(_settings.NodeIds.W1),
                         AttributeId = AttributeIds.Value
                     },
-
+                        new ReadValueId {
+                        NodeId = NodeId.Parse(_settings.NodeIds.Alarms),
+                        AttributeId = AttributeIds.Value
+                    },
+                         new ReadValueId {
+                        NodeId = NodeId.Parse(_settings.NodeIds.Warnings),
+                        AttributeId = AttributeIds.Value
+                },
                 }
-            };
+            }; 
 
             while (true)
             {
@@ -174,6 +188,8 @@ namespace SensorMonitor.Services
                     _Pressure[0] = (float)(readResult.Results[16].Value ?? 0.0);
                     _Pressure[1] = (float)(readResult.Results[17].Value ?? 0.0);
                     _Weight = (float)(readResult.Results[18].Value ?? 0.0);
+                    _Alarms = (UInt32)(readResult.Results[19].Value ?? 0);
+                    _Warnings = (UInt32)(readResult.Results[20].Value ?? 0);
                     OnDataReceived?.Invoke();
                     await Task.Delay(_settings.PLCPollingInterval * 1000);// Opóźnienie między kolejnymi odczytami danych z PLC
                 }

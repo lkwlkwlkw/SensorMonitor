@@ -58,6 +58,8 @@
     <ROW File="SensorMonitor.dll.config" Component_="appsettings.json" FileName="SENSOR~1.CON|SensorMonitor.dll.config" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\SensorMonitor\bin\Release\net10.0-windows\publish\win-x64\SensorMonitor.dll.config" SelfReg="false"/>
     <ROW File="SensorMonitor.exe" Component_="SensorMonitor.exe" FileName="SENSOR~1.EXE|SensorMonitor.exe" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\SensorMonitor\bin\Release\net10.0-windows\publish\win-x64\SensorMonitor.exe" SelfReg="false" DigSign="true"/>
     <ROW File="SensorMonitor.pdb" Component_="SensorMonitor.exe" FileName="SENSOR~1.PDB|SensorMonitor.pdb" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\SensorMonitor\bin\Release\net10.0-windows\publish\win-x64\SensorMonitor.pdb" SelfReg="false"/>
+    <ROW File="Alarms.txt" Component_="appsettings.json" FileName="Alarms.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\SensorMonitor\bin\Release\net10.0-windows\publish\win-x64\Alarms.txt" SelfReg="false"/>
+    <ROW File="Warnings.txt" Component_="appsettings.json" FileName="Warnings.txt" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\SensorMonitor\bin\Release\net10.0-windows\publish\win-x64\Warnings.txt" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
     <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder="..\..\..\.." PackageFileName="[|AI_AIP_FILENAME]" Languages="en" InstallationType="4" SummInfoMetadata="Page Count:450" UseLargeSchema="true" MsiPackageType="x64"/>

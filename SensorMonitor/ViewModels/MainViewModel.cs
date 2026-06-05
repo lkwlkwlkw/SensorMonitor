@@ -15,7 +15,8 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
-
+using System.IO;
+using System.Diagnostics;
 
 
 namespace SensorMonitor.ViewModels
@@ -60,6 +61,12 @@ namespace SensorMonitor.ViewModels
         private uint _DBWriteTicksNeeded;
         private readonly AppSettings _settings;
         private bool _StopButtonEnabled;
+        private List<string> AlarmsTextList;
+        private List<string> WarningsTextList;
+        private ObservableCollection<string> _AlarmsAndWarningsTextList =new();
+        private UInt32 _AlarmsOld;
+        private UInt32 _WarningsOld;
+
         public bool StopButtonEnabled
         {
             get => _StopButtonEnabled;
@@ -154,6 +161,15 @@ namespace SensorMonitor.ViewModels
             }
         }
 
+        public ObservableCollection<string> AlarmsAndWarningsTextList
+        {
+            get { return _AlarmsAndWarningsTextList; }
+            set
+            {
+                _AlarmsAndWarningsTextList = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string AssemblyVersion
         {
@@ -197,6 +213,24 @@ namespace SensorMonitor.ViewModels
 
             _DBWriteTicksNeeded = (uint)(_settings.SaveToDBInterval / _settings.PLCPollingInterval); // Obliczenie, ile cykli odczytu PLC musi minąć, zanim dane zostaną zapisane do bazy danych
 
+            try
+            {
+                AlarmsTextList = File.ReadAllLines("Alarms.txt").ToList();
+                WarningsTextList = File.ReadAllLines("Warnings.txt").ToList();
+            } 
+            catch 
+            {
+                var dialog = new ContentDialog
+                {
+                    Title = "Błąd",
+                    Content = "Nie można odczytać pliku treści alarmów lub ostrzeżeń.",
+                    PrimaryButtonText = "OK",
+                    DefaultButton = ContentDialogButton.Primary
+                };
+
+                 dialog.ShowAsync();
+            }
+            
         }
 
         #region OnClick Events
@@ -301,10 +335,8 @@ namespace SensorMonitor.ViewModels
             var itemsToSend = new List<(string nodeId, object value)>
             {
              (_settings.NodeIds.DegassingStart, true),
-             (_settings.NodeIds.DegassingTime, _DegassingTime),
-             
+             (_settings.NodeIds.DegassingTime, _DegassingTime),             
              };
-
             _plcConnectionService.WriteData(itemsToSend);
         }
 
@@ -323,16 +355,13 @@ namespace SensorMonitor.ViewModels
         public void ResetPlotAndClearPoints(PlotModel model, bool invalidate)
         {
             foreach (var s in model.Series.OfType<LineSeries>())
-                s.Points.Clear();
-
-            //  
+                s.Points.Clear();             
             if (invalidate)
             {
                 model.ResetAllAxes();
                 model.InvalidatePlot(true);
             }
         }
-
 
         private void LoadDataFromDatabase(string filePath)
         {
@@ -355,7 +384,6 @@ namespace SensorMonitor.ViewModels
                         AddPointToBoth(TemperatureModel, TemperatureModelCommon, DateTimeAxis.ToDouble(pomiar.Data), temperatureValue, seriesIndex);
                     }
                 }
-
 
                 for (int seriesIndex = 0; seriesIndex < _PressureSeries.Length; seriesIndex++)
                 {
@@ -380,7 +408,6 @@ namespace SensorMonitor.ViewModels
                 PressureModelCommon.InvalidatePlot(true);
                 WeightModel.InvalidatePlot(true);
                 WeightModelCommon.InvalidatePlot(true);
-
             }
         }
 
@@ -502,6 +529,7 @@ namespace SensorMonitor.ViewModels
         {
             UpdateSensorFields();
             UpdateWeightChange();
+            AlarmsUpdate();
 
             if (!_DBWriteActive && !(_dataBaseService == null))
                 return;
@@ -516,6 +544,41 @@ namespace SensorMonitor.ViewModels
             if (_DBWriteTicksCounter >= _DBWriteTicksNeeded) //Liczba przy której nastąpi wpis do DB
             {
                 _DBWriteTicksCounter = 0; // Reset licznika
+            }
+        }
+
+
+        private void AlarmsUpdate()
+        {
+            // Implementacja aktualizacji listy alarmów na podstawie wartości otrzymanych z PLC
+            // Możesz tutaj przetłumaczyć wartości alarmów na tekst i zaktualizować interfejs użytkownika
+           
+            if (_AlarmsOld != _plcConnectionService.Alarms || _WarningsOld != _plcConnectionService.Warnings)
+            {
+                AlarmsAndWarningsTextList.Clear(); 
+                foreach (var bit in GetSetBits(_plcConnectionService.Alarms))
+                {
+                    if (bit < AlarmsTextList.Count)
+                        AlarmsAndWarningsTextList.Add(DateTime.Now.ToString("dd.MM HH:mm:ss") + " - " + AlarmsTextList[bit]); 
+                   
+                }
+                foreach (var bit in GetSetBits(_plcConnectionService.Warnings))
+                {
+                   if (bit < WarningsTextList.Count)
+                        AlarmsAndWarningsTextList.Add(DateTime.Now.ToString("dd.MM HH:mm:ss") + " - " + WarningsTextList[bit]);
+                }  
+            }
+            _AlarmsOld = _plcConnectionService.Alarms;
+            _WarningsOld = _plcConnectionService.Warnings;
+        }
+
+       private IEnumerable<int> GetSetBits(uint value) //zamienia wartość bitową alarmów i ostrzeżeń na listę indeksów bitów, które są ustawione na 1, co pozwala na łatwe mapowanie tych indeksów do tekstu alarmów i ostrzeżeń z plików tekstowych
+        {
+            while (value != 0)
+            {
+                int bit = System.Numerics.BitOperations.TrailingZeroCount(value);
+                yield return bit;
+                value &= value - 1;
             }
         }
 
@@ -633,5 +696,20 @@ namespace SensorMonitor.ViewModels
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => value is bool b ? !b : value;
     }
+
+    public class ContainsAlarmConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string s)
+                return s.Contains("Alarm", StringComparison.OrdinalIgnoreCase);
+
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+
 
 }
