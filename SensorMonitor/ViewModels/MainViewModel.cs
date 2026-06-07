@@ -53,9 +53,9 @@ namespace SensorMonitor.ViewModels
         private DispatcherTimer _timer = new DispatcherTimer();
         private DateTime _startTime;
         public ObservableCollection<string> Temperature { get; } =
-        new ObservableCollection<string> { "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0" };
+        new ObservableCollection<string> { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" };
         public ObservableCollection<string> Pressure { get; } =
-          new ObservableCollection<string> { "0.0", "0.0" };
+          new ObservableCollection<string> { "0", "0" };
         public string _Weight = "0.0";
         private bool _DBWriteActive;
         private uint _DBWriteTicksCounter;
@@ -719,12 +719,12 @@ namespace SensorMonitor.ViewModels
         {
             for (int i = 0; i < Temperature.Count; i++)
             {
-                Temperature[i] = _plcConnectionService.Temperature[i].ToString("F1");
+                Temperature[i] = _plcConnectionService.Temperature[i].ToString("F0");
             }
 
             for (int i = 0; i < Pressure.Count; i++)
             {
-                Pressure[i] = _plcConnectionService.Pressure[i].ToString("F1");
+                Pressure[i] = _plcConnectionService.Pressure[i].ToString("F0");
             }
 
             WeightText = _plcConnectionService.Weight.ToString("F1");

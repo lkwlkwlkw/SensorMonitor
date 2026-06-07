@@ -305,9 +305,9 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T1" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[0]}" />
+                                    Opacity="1.5"
+                                    Text="T1" TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[0]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -319,9 +319,9 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T2" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[1]}" />
+                                    Opacity="1.5"
+                                    Text="T2" TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[1]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -331,9 +331,9 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T3" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[2]}" />
+                                    Opacity="1.5"
+                                    Text="T3" TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[2]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -343,9 +343,9 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T4" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[3]}" />
+                                    Opacity="1.5"
+                                    Text="T4" TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[3]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -355,9 +355,9 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T5" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[4]}" />
+                                    Opacity="1.5"
+                                    Text="T5" TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[4]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -367,9 +367,9 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T6" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[5]}" />
+                                    Opacity="1.5"
+                                    Text="T6" TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[5]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -379,9 +379,9 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T7" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[6]}" />
+                                    Opacity="1.5"
+                                    Text="T7" TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[6]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -391,9 +391,9 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T8" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[7]}" />
+                                    Opacity="1.5"
+                                    Text="T8" TextAlignment="Center" />
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[7]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -403,9 +403,9 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T9" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[8]}" />
+                                    Opacity="1.5"
+                                    Text="T9"  TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[8]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
 
@@ -416,9 +416,10 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T10" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[9]}" />
+                                    Opacity="1.5"
+                                    Text="T10"
+                                    TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[9]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -428,9 +429,10 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T11" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[10]}" />
+                                    Opacity="1.5"
+                                    Text="T11"
+                                    TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[10]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -440,9 +442,10 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T12" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[11]}" />
+                                    Opacity="1.5"
+                                    Text="T12"
+                                    TextAlignment="Center" />
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[11]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -452,9 +455,10 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T13" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[12]}" />
+                                    Opacity="1.5"
+                                    Text="T13"
+                                    TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[12]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -464,9 +468,10 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T14" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[13]}" />
+                                    Opacity="1.5"
+                                    Text="T14"
+                                    TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[13]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -476,9 +481,10 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T15" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[14]}" />
+                                    Opacity="1.5"
+                                    Text="T15"
+                                    TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[14]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel
@@ -488,9 +494,10 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Opacity="0.5"
-                                    Text="T16" />
-                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[15]}" />
+                                    Opacity="1.5"
+                                    Text="T16"
+                                    TextAlignment="Center"/>
+                                <TextBlock Background="WhiteSmoke" Text="{Binding Temperature[15]}" TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
 
