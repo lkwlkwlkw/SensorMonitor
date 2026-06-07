@@ -17,6 +17,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using System.IO;
 using System.Diagnostics;
+using Workstation.ServiceModel.Ua;
 
 
 namespace SensorMonitor.ViewModels
@@ -48,7 +49,7 @@ namespace SensorMonitor.ViewModels
         private string _OrderNameText = "Zlecenie";
         private float _WeightChange = 0;
         private float _oldWeight = 0;
-        private UInt32 _DegassingTime=30;
+        private UInt32 _DegassingTime = 30;
         private DispatcherTimer _timer = new DispatcherTimer();
         private DateTime _startTime;
         public ObservableCollection<string> Temperature { get; } =
@@ -63,7 +64,7 @@ namespace SensorMonitor.ViewModels
         private bool _StopButtonEnabled;
         private List<string> AlarmsTextList;
         private List<string> WarningsTextList;
-        private ObservableCollection<string> _AlarmsAndWarningsTextList =new();
+        private ObservableCollection<string> _AlarmsAndWarningsTextList = new();
         private UInt32 _AlarmsOld;
         private UInt32 _WarningsOld;
 
@@ -156,7 +157,7 @@ namespace SensorMonitor.ViewModels
             get { return _DegassingTime; }
             set
             {
-                _DegassingTime=value;
+                _DegassingTime = value;
                 OnPropertyChanged();
             }
         }
@@ -213,12 +214,19 @@ namespace SensorMonitor.ViewModels
 
             _DBWriteTicksNeeded = (uint)(_settings.SaveToDBInterval / _settings.PLCPollingInterval); // Obliczenie, ile cykli odczytu PLC musi minąć, zanim dane zostaną zapisane do bazy danych
 
+            LoadAlarmsAndWarningsText(); // Wczytanie treści alarmów i ostrzeżeń z plików tekstowych do listy, która będzie używana do aktualizacji interfejsu użytkownika
+
+        }
+
+
+        private void LoadAlarmsAndWarningsText() // Metoda do wczytywania treści alarmów i ostrzeżeń z plików tekstowych, jeśli chcesz odświeżyć treść bez ponownego uruchamiania aplikacji
+        {
             try
             {
                 AlarmsTextList = File.ReadAllLines("Alarms.txt").ToList();
                 WarningsTextList = File.ReadAllLines("Warnings.txt").ToList();
-            } 
-            catch 
+            }
+            catch
             {
                 var dialog = new ContentDialog
                 {
@@ -227,11 +235,10 @@ namespace SensorMonitor.ViewModels
                     PrimaryButtonText = "OK",
                     DefaultButton = ContentDialogButton.Primary
                 };
-
-                 dialog.ShowAsync();
+                dialog.ShowAsync();
             }
-            
         }
+
 
         #region OnClick Events
         // Metody obsługujące kliknięcia przycisków
@@ -335,7 +342,7 @@ namespace SensorMonitor.ViewModels
             var itemsToSend = new List<(string nodeId, object value)>
             {
              (_settings.NodeIds.DegassingStart, true),
-             (_settings.NodeIds.DegassingTime, _DegassingTime),             
+             (_settings.NodeIds.DegassingTime, _DegassingTime),
              };
             _plcConnectionService.WriteData(itemsToSend);
         }
@@ -355,7 +362,7 @@ namespace SensorMonitor.ViewModels
         public void ResetPlotAndClearPoints(PlotModel model, bool invalidate)
         {
             foreach (var s in model.Series.OfType<LineSeries>())
-                s.Points.Clear();             
+                s.Points.Clear();
             if (invalidate)
             {
                 model.ResetAllAxes();
@@ -529,7 +536,9 @@ namespace SensorMonitor.ViewModels
         {
             UpdateSensorFields();
             UpdateWeightChange();
-            AlarmsUpdate();
+            //  AlarmsUpdate();
+            UpdateAlarmsView();
+            UpdateWarningsView();
 
             if (!_DBWriteActive && !(_dataBaseService == null))
                 return;
@@ -547,32 +556,102 @@ namespace SensorMonitor.ViewModels
             }
         }
 
-
         private void AlarmsUpdate()
         {
             // Implementacja aktualizacji listy alarmów na podstawie wartości otrzymanych z PLC
             // Możesz tutaj przetłumaczyć wartości alarmów na tekst i zaktualizować interfejs użytkownika
-           
+            // Uproszczona nie używana metoda
+
             if (_AlarmsOld != _plcConnectionService.Alarms || _WarningsOld != _plcConnectionService.Warnings)
             {
-                AlarmsAndWarningsTextList.Clear(); 
+                AlarmsAndWarningsTextList.Clear();
                 foreach (var bit in GetSetBits(_plcConnectionService.Alarms))
                 {
                     if (bit < AlarmsTextList.Count)
-                        AlarmsAndWarningsTextList.Add(DateTime.Now.ToString("dd.MM HH:mm:ss") + " - " + AlarmsTextList[bit]); 
-                   
+                        AlarmsAndWarningsTextList.Add(DateTime.Now.ToString("dd.MM HH:mm:ss") + " - " + AlarmsTextList[bit]);
+                    
+
                 }
                 foreach (var bit in GetSetBits(_plcConnectionService.Warnings))
                 {
-                   if (bit < WarningsTextList.Count)
+                    if (bit < WarningsTextList.Count)
                         AlarmsAndWarningsTextList.Add(DateTime.Now.ToString("dd.MM HH:mm:ss") + " - " + WarningsTextList[bit]);
-                }  
+                }
+            }
+
+            _AlarmsOld = _plcConnectionService.Alarms;
+            _WarningsOld = _plcConnectionService.Warnings;
+
+        }
+
+
+        public void UpdateAlarmsView()
+        {
+            UInt32 _changedErrors = _AlarmsOld ^ _plcConnectionService.Alarms; // bity które się zmieniły
+            UInt32 _alarmsToAdd = _changedErrors & _plcConnectionService.Alarms;
+            UInt32 _alarmsToRemove = _changedErrors & _AlarmsOld;            
+            
+                foreach (var bit in GetSetBits(_alarmsToRemove))
+                {
+                for (int i = 0; i < AlarmsAndWarningsTextList.Count; i++)
+                {
+                    if (AlarmsAndWarningsTextList[i].Contains(AlarmsTextList[bit]))
+                    {
+                        AlarmsAndWarningsTextList.RemoveAt(i);
+                     }
+                }                    
+                }
+
+            foreach (var bit in GetSetBits(_alarmsToAdd))
+            {
+                var _textLine = DateTime.Now.ToString("yy.dd.MM HH:mm:ss") + " - " + AlarmsTextList[bit];
+                AlarmsAndWarningsTextList.Add(_textLine);
+                SaveAlarmsAndWarningsToFile(_textLine);
             }
             _AlarmsOld = _plcConnectionService.Alarms;
+        }
+
+
+        public void UpdateWarningsView()
+        {
+            UInt32 _changedErrors = _WarningsOld ^ _plcConnectionService.Warnings; // bity które się zmieniły
+            UInt32 _warningsToAdd = _changedErrors & _plcConnectionService.Warnings;
+            UInt32 _warningsToRemove = _changedErrors & _WarningsOld;
+
+            foreach (var bit in GetSetBits(_warningsToRemove))
+            {
+                for (int i = 0; i < AlarmsAndWarningsTextList.Count; i++)
+                {
+                    if (AlarmsAndWarningsTextList[i].Contains(WarningsTextList[bit]))
+                    {
+                        AlarmsAndWarningsTextList.RemoveAt(i);
+                    }
+                }
+            }
+
+            foreach (var bit in GetSetBits(_warningsToAdd))
+            {
+               var _textLine = DateTime.Now.ToString("yy.dd.MM HH:mm:ss") + " - " + WarningsTextList[bit];
+                AlarmsAndWarningsTextList.Add(_textLine);
+                SaveAlarmsAndWarningsToFile(_textLine);
+            }
             _WarningsOld = _plcConnectionService.Warnings;
         }
 
-       private IEnumerable<int> GetSetBits(uint value) //zamienia wartość bitową alarmów i ostrzeżeń na listę indeksów bitów, które są ustawione na 1, co pozwala na łatwe mapowanie tych indeksów do tekstu alarmów i ostrzeżeń z plików tekstowych
+        private void SaveAlarmsAndWarningsToFile(string _textLine) // Metoda do zapisywania aktualnych alarmów i ostrzeżeń do pliku tekstowego, jeśli chcesz mieć historię alarmów i ostrzeżeń
+        {
+            try
+            {
+                Directory.CreateDirectory(@"C:\ErrorsLog");
+                string fileName = @"C:\ErrorsLog\" + $"AlarmsAndWarnings_{DateTime.Now:yyyyMM}.txt";
+                File.AppendAllText(fileName, _textLine + Environment.NewLine);
+            }
+            catch
+            { }
+        }
+
+
+        private IEnumerable<int> GetSetBits(uint value) //zamienia wartość bitową alarmów i ostrzeżeń na listę indeksów bitów, które są ustawione na 1, co pozwala na łatwe mapowanie tych indeksów do tekstu alarmów i ostrzeżeń z plików tekstowych
         {
             while (value != 0)
             {

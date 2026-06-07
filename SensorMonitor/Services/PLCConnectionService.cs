@@ -196,7 +196,7 @@ namespace SensorMonitor.Services
                 catch (Exception ex)
                 {
                     ConnectionStatusChanged?.Invoke($"Problem z połączeniem: {ex.Message}");
-                    await channel!.AbortAsync(); //???????????????????
+                   // await channel!.AbortAsync(); //???????????????????
                     await channel!.CloseAsync();
                     await Connect();
                     break;
