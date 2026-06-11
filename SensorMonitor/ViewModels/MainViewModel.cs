@@ -17,7 +17,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using System.IO;
 using System.Diagnostics;
-using Workstation.ServiceModel.Ua;
+
 
 
 namespace SensorMonitor.ViewModels
@@ -67,6 +67,8 @@ namespace SensorMonitor.ViewModels
         private ObservableCollection<string> _AlarmsAndWarningsTextList = new();
         private UInt32 _AlarmsOld;
         private UInt32 _WarningsOld;
+        private bool _DegassingInProgress=false;
+        private Int32 _DegassingTimeRemained = 0;
 
         public bool StopButtonEnabled
         {
@@ -90,6 +92,16 @@ namespace SensorMonitor.ViewModels
                 // Powiadom WPF, że CanExecute mogło się zmienić
                 CommandManager.InvalidateRequerySuggested();
             }
+        }
+
+        public bool DegassingInProgress
+        {
+            get => _DegassingInProgress;
+            set
+            {
+                _DegassingInProgress = value;
+                OnPropertyChanged();
+             }
         }
 
         public string CycleDurationText
@@ -161,6 +173,17 @@ namespace SensorMonitor.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public Int32 DegassingTimeRemained
+        {
+            get { return _DegassingTimeRemained; }
+            set
+            {
+                _DegassingTimeRemained = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public ObservableCollection<string> AlarmsAndWarningsTextList
         {
@@ -339,12 +362,24 @@ namespace SensorMonitor.ViewModels
 
         private void OnClickDegassing(object obj)
         {
+          if (!DegassingInProgress)
+          {
             var itemsToSend = new List<(string nodeId, object value)>
             {
              (_settings.NodeIds.DegassingStart, true),
              (_settings.NodeIds.DegassingTime, _DegassingTime),
              };
             _plcConnectionService.WriteData(itemsToSend);
+          }
+            else
+            {
+                var itemsToSend = new List<(string nodeId, object value)>
+            {
+             (_settings.NodeIds.DegassingStart, false),
+             };
+                _plcConnectionService.WriteData(itemsToSend);
+            }
+            DegassingInProgress = !DegassingInProgress;
         }
 
         #endregion
@@ -449,7 +484,8 @@ namespace SensorMonitor.ViewModels
             {
                 // Title = "Temperatury",
                 IsLegendVisible = true,
-                Legends = { new Legend { LegendPosition = LegendPosition.TopRight } }
+                Legends = { new Legend { LegendPosition = LegendPosition.TopRight }
+                }
             };
 
             this.TemperatureModel.Axes.Add(new DateTimeAxis
@@ -464,7 +500,13 @@ namespace SensorMonitor.ViewModels
                 Maximum = _settings.ScaleFactors.TemperatureMax,
                 Minimum = _settings.ScaleFactors.TemperatureMin,
                 IsZoomEnabled = false,
-                IsPanEnabled = false
+                IsPanEnabled = false,
+                MajorGridlineStyle = LineStyle.Solid,
+                MajorGridlineColor = OxyColors.LightGray,
+                MajorGridlineThickness = 1,
+                MinorGridlineStyle = LineStyle.Dot,
+                MinorGridlineColor = OxyColors.LightGray,
+                MinorGridlineThickness = 0.5
             });
         }
 
@@ -489,7 +531,13 @@ namespace SensorMonitor.ViewModels
                 Maximum = _settings.ScaleFactors.PressureMax,
                 Minimum = _settings.ScaleFactors.PressureMin,
                 IsZoomEnabled = false,
-                IsPanEnabled = false
+                IsPanEnabled = false,
+                MajorGridlineStyle = LineStyle.Solid,
+                MajorGridlineColor = OxyColors.LightGray,
+                MajorGridlineThickness = 1,
+                MinorGridlineStyle = LineStyle.Dot,
+                MinorGridlineColor = OxyColors.LightGray,
+                MinorGridlineThickness = 0.5
             });
         }
 
@@ -512,7 +560,13 @@ namespace SensorMonitor.ViewModels
                 Maximum = _settings.ScaleFactors.WeightMax,
                 Minimum = _settings.ScaleFactors.WeightMin,
                 IsZoomEnabled = false,
-                IsPanEnabled = false
+                IsPanEnabled = false,
+                MajorGridlineStyle = LineStyle.Solid,
+                MajorGridlineColor = OxyColors.LightGray,
+                MajorGridlineThickness = 1,
+                MinorGridlineStyle = LineStyle.Dot,
+                MinorGridlineColor = OxyColors.LightGray,
+                MinorGridlineThickness = 0.5
             });
         }
 
@@ -536,9 +590,9 @@ namespace SensorMonitor.ViewModels
         {
             UpdateSensorFields();
             UpdateWeightChange();
-            //  AlarmsUpdate();
             UpdateAlarmsView();
             UpdateWarningsView();
+            UpdateDegassingTimeRemaining();
 
             if (!_DBWriteActive && !(_dataBaseService == null))
                 return;
@@ -739,6 +793,13 @@ namespace SensorMonitor.ViewModels
 
         }
 
+        private void UpdateDegassingTimeRemaining()
+        {
+            // Implementacja aktualizacji czasu pozostałego do zakończenia odgazowania na podstawie wartości otrzymanych z PLC
+            // Możesz tutaj przetłumaczyć wartość na tekst i zaktualizować interfejs użytkownika
+            DegassingTimeRemained = _plcConnectionService.DegassingTimeRemained;
+        }
+
         private bool _closingHandled = false;
 
         public async void OnWindowClosing(object sender, CancelEventArgs e)
@@ -791,4 +852,22 @@ namespace SensorMonitor.ViewModels
     }
 
 
-}
+    public class SecondsToTimeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Int32 seconds)
+            {
+                TimeSpan time = TimeSpan.FromSeconds(seconds);
+                string formatted =  (time < TimeSpan.Zero ? "-" : "+") + time.Duration().ToString(@"mm\:ss");                
+                // return time.ToString(@"mm\:ss");
+                return formatted;
+            }
+            return value;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+
+
+    }

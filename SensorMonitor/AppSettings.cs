@@ -33,6 +33,7 @@ public class NodeIds
     public string W1 { get; set; }
     public string DegassingTime { get; set; }
     public string DegassingStart { get; set; }
+    public string DegassingTimeRemained { get; set; }
     public string Alarms { get; set; }
     public string Warnings { get; set; }
 }

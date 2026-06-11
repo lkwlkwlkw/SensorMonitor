@@ -29,6 +29,9 @@ namespace SensorMonitor.Services
         private UInt32 _Warnings;
         public UInt32 Warnings { get => _Warnings; }
 
+        private Int32 _DegassingTimeRemained;
+        public Int32 DegassingTimeRemained { get => _DegassingTimeRemained; }
+
         public bool IsConnected { get => channel != null && channel.State == CommunicationState.Opened; }
 
 
@@ -170,9 +173,13 @@ namespace SensorMonitor.Services
                          new ReadValueId {
                         NodeId = NodeId.Parse(_settings.NodeIds.Warnings),
                         AttributeId = AttributeIds.Value
-                },
+                     },
+                     new ReadValueId {
+                        NodeId = NodeId.Parse(_settings.NodeIds.DegassingTimeRemained),
+                        AttributeId = AttributeIds.Value
+                     },
                 }
-            }; 
+            };
 
             while (true)
             {
@@ -190,13 +197,14 @@ namespace SensorMonitor.Services
                     _Weight = (float)(readResult.Results[18].Value ?? 0.0);
                     _Alarms = (UInt32)(readResult.Results[19].Value ?? 0);
                     _Warnings = (UInt32)(readResult.Results[20].Value ?? 0);
+                    _DegassingTimeRemained = (Int32)(readResult.Results[21].Value ?? 0);
                     OnDataReceived?.Invoke();
                     await Task.Delay(_settings.PLCPollingInterval * 1000);// Opóźnienie między kolejnymi odczytami danych z PLC
                 }
                 catch (Exception ex)
                 {
                     ConnectionStatusChanged?.Invoke($"Problem z połączeniem: {ex.Message}");
-                   // await channel!.AbortAsync(); //???????????????????
+                    // await channel!.AbortAsync(); //???????????????????
                     await channel!.CloseAsync();
                     await Connect();
                     break;
@@ -221,7 +229,7 @@ namespace SensorMonitor.Services
             {
                 NodesToWrite = writeValues.ToArray()
             };
-            var response = await channel.WriteAsync(request);          
+            var response = await channel.WriteAsync(request);
         }
 
         public async void ConnectPLC()
