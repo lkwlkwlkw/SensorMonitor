@@ -200,7 +200,7 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
-                                    Text="Odgaz.pozostało [mm:ss]"
+                                    Text="Odgaz.pozostało [mmm:ss]"
                                     TextAlignment="Center" />
                                 <TextBlock
                                     Background="WhiteSmoke"
@@ -266,7 +266,7 @@
                                 Margin="5,3,5,5"
                                 HorizontalAlignment="Center"
                                 Command="{Binding ClickOpenFileCommand}"
-                                IsEnabled="{Binding StopButtonEnabled, Converter={StaticResource Not}}">
+                                IsEnabled="{Binding StopButtonEnabled, Converter={StaticResource Not}}" >
                                 <ui:SimpleStackPanel Orientation="Horizontal">
                                     <materialIcons:MaterialIcon
                                         Height="20"
@@ -281,7 +281,7 @@
                                 Margin="5,3,5,5"
                                 Header="Czas odgazowania [min]"
                                 LargeChange="10"
-                                Maximum="90"
+                                Maximum="999"
                                 Minimum="0"
                                 SmallChange="1"
                                 SpinButtonPlacementMode="Inline"
@@ -295,11 +295,12 @@
                                 Command="{Binding ClickDegassing}"
                                 IsEnabled="{Binding StopButtonEnabled}">
                                 <Button.Style>
-                                    <Style TargetType="Button">
+                                    <Style TargetType="Button"     BasedOn="{StaticResource {x:Type Button}}"   >
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding DegassingInProgress}" Value="True">
                                                 <Setter Property="Background" Value="LightGreen" />
                                             </DataTrigger>
+                                            
                                         </Style.Triggers>
                                     </Style>
                                 </Button.Style>
@@ -707,7 +708,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <ui:SimpleStackPanel
-                    Width="800"
+                    Width="auto"
                     Margin="20"
                     HorizontalAlignment="Center"
                     Orientation="Vertical">
@@ -739,12 +740,14 @@
                         FontWeight="Bold"
                         Text="{Binding AssemblyBuildDate, StringFormat='Skompilowano: {0}'}" />
 
-                    <TextBlock Margin="0,20,0,0">
-                        <Bold>Instrukcja:</Bold> <LineBreak />
-                        Prawy klawisz myszy + ruch : przesuwanie wykresu<LineBreak />
-                        Kółko myszy                : skalowanie wykresu<LineBreak />
-                        Przycisk "Domyślne"        : przywraca domyślne skalowanie<LineBreak />
-                        Przycisk "Wczytaj"         : wczytuje historyczne zapisy<LineBreak />
+                    <TextBlock Margin="0,20,0,0"  HorizontalAlignment="Left">
+                       <Bold>Instrukcja:</Bold> <LineBreak />
+                        Prawy klawisz myszy + ruch  <Run Text="     "/>:<Run Text=" "/>  przesuwanie wykresu<LineBreak />
+                        Kółko myszy <Run Text="                            "/> : <Run Text=" "/> skalowanie wykresu<LineBreak />
+                        Przycisk "Domyślne" <Run Text=" "/> : <Run Text=" "/> przywraca domyślne skalowanie<LineBreak />
+                        Przycisk "Wczytaj"     <Run Text="     "/> : <Run Text=" "/> wczytuje historyczne zapisy<LineBreak />
+
+
                     </TextBlock>
 
 

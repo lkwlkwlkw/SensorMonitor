@@ -72,7 +72,11 @@ namespace SensorMonitor.Services
 
         public void DatabaseClose()
         {
-            _dataStore?.Dispose();
+            //_dataStore?.Dispose();
+            if (_dataStore != null)
+            {
+                Task.Run(() => _dataStore.Dispose());
+            }
         }
     }
 }

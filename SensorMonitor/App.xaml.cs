@@ -91,7 +91,7 @@ namespace SensorMonitor
             base.OnExit(e);
         }
 
-        private static void RegisterOnStartup(string taskName = "Sensor monitor")
+        private static void RegisterOnStartup(string taskName = "Sensor monitor") //Dodaje zadanie do harmonogramu zadań
         {
             string exePath = Process.GetCurrentProcess().MainModule.FileName;
             string exeDir = Path.GetDirectoryName(exePath);
@@ -127,10 +127,6 @@ namespace SensorMonitor
                     // obsługa błędu
                     MessageBox.Show($"Błąd: {ex.Message}");
                 }
-
-
-
-
             }
         }
 

@@ -323,6 +323,16 @@ namespace SensorMonitor.ViewModels
                 pngExporter.ExportToFile(PressureModel, $@"c:\Raporty\Obrazy\{_CycleStartTextFileName}_Ciśnienie.png");
                 pngExporter.ExportToFile(WeightModel, $@"c:\Raporty\Obrazy\{_CycleStartTextFileName}_Waga.png");
 
+                if (DegassingInProgress) //Zatrzymanie odgazowania
+                {
+                    DegassingInProgress = false;
+                    var itemsToSend = new List<(string nodeId, object value)>
+                    {
+                     (_settings.NodeIds.DegassingStart, false),
+                     };
+                    _plcConnectionService.WriteData(itemsToSend);
+                }
+
             }
         }
 
@@ -652,7 +662,9 @@ namespace SensorMonitor.ViewModels
                     if (AlarmsAndWarningsTextList[i].Contains(AlarmsTextList[bit]))
                     {
                         AlarmsAndWarningsTextList.RemoveAt(i);
-                     }
+                        var _textLine = DateTime.Now.ToString("yy.dd.MM HH:mm:ss") + " - " + AlarmsTextList[bit];
+                        SaveAlarmsAndWarningsToFile(_textLine + " (Outgoing)");
+                    }
                 }                    
                 }
 
@@ -660,7 +672,7 @@ namespace SensorMonitor.ViewModels
             {
                 var _textLine = DateTime.Now.ToString("yy.dd.MM HH:mm:ss") + " - " + AlarmsTextList[bit];
                 AlarmsAndWarningsTextList.Add(_textLine);
-                SaveAlarmsAndWarningsToFile(_textLine);
+                SaveAlarmsAndWarningsToFile(_textLine +" (Incoming)");
             }
             _AlarmsOld = _plcConnectionService.Alarms;
         }
@@ -679,6 +691,8 @@ namespace SensorMonitor.ViewModels
                     if (AlarmsAndWarningsTextList[i].Contains(WarningsTextList[bit]))
                     {
                         AlarmsAndWarningsTextList.RemoveAt(i);
+                        var _textLine = DateTime.Now.ToString("yy.dd.MM HH:mm:ss") + " - " + WarningsTextList[bit];
+                        SaveAlarmsAndWarningsToFile(_textLine + " (Outgoing)");
                     }
                 }
             }
@@ -687,7 +701,7 @@ namespace SensorMonitor.ViewModels
             {
                var _textLine = DateTime.Now.ToString("yy.dd.MM HH:mm:ss") + " - " + WarningsTextList[bit];
                 AlarmsAndWarningsTextList.Add(_textLine);
-                SaveAlarmsAndWarningsToFile(_textLine);
+                SaveAlarmsAndWarningsToFile(_textLine + " (Incoming)");
             }
             _WarningsOld = _plcConnectionService.Warnings;
         }
@@ -742,9 +756,9 @@ namespace SensorMonitor.ViewModels
             this.WeightModelCommon.InvalidatePlot(true);
         }
 
-        private void UpdateDBWrite()
+        private  void UpdateDBWrite()
         {
-            _dataBaseService.SavePomiar(new DataBaseService.Pomiar
+             _dataBaseService.SavePomiar(new DataBaseService.Pomiar
             {
                 Data = DateTime.Now,
                 Temp1 = (float)Math.Round(_plcConnectionService.Temperature[0], 1),
@@ -761,7 +775,7 @@ namespace SensorMonitor.ViewModels
                 Temp12 = (float)Math.Round(_plcConnectionService.Temperature[11], 1),
                 Pressure1 = (float)Math.Round(_plcConnectionService.Pressure[0], 1),
                 Pressure2 = (float)Math.Round(_plcConnectionService.Pressure[1], 1),
-                Weight = (float)Math.Round(_plcConnectionService.Weight, 1)
+                Weight = (float)Math.Round(_plcConnectionService.Weight, 3)
             });
         }
 
@@ -781,7 +795,7 @@ namespace SensorMonitor.ViewModels
                 Pressure[i] = _plcConnectionService.Pressure[i].ToString("F0");
             }
 
-            WeightText = _plcConnectionService.Weight.ToString("F1");
+            WeightText = _plcConnectionService.Weight.ToString("F3");
         }
 
         private void UpdateWeightChange()
@@ -859,7 +873,7 @@ namespace SensorMonitor.ViewModels
             if (value is Int32 seconds)
             {
                 TimeSpan time = TimeSpan.FromSeconds(seconds);
-                string formatted =  (time < TimeSpan.Zero ? "-" : "+") + time.Duration().ToString(@"mm\:ss");                
+                string formatted =  (time < TimeSpan.Zero ? "-" : "+") + ((int)time.Duration().TotalMinutes).ToString("000") + time.Duration().ToString(@"\:ss");                
                 // return time.ToString(@"mm\:ss");
                 return formatted;
             }
