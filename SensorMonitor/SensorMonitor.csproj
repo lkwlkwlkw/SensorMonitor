@@ -11,9 +11,9 @@
     <StartupObject></StartupObject>
 	<Nullable>disable</Nullable>
 	<IncrementVersionOnBuild>1.yyyy.Mdd.Hmm</IncrementVersionOnBuild>
-	<AssemblyVersion>1.1.0.0</AssemblyVersion>
-	<FileVersion>1.1.0.0</FileVersion>
-	<Version>1.1.0.0</Version>
+	<AssemblyVersion>1.1.1.0</AssemblyVersion>
+	<FileVersion>1.1.1.0</FileVersion>
+	<Version>1.1.1.0</Version>
 	  <EnableInterceptors>true</EnableInterceptors>
 	  <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.Extensions.Configuration.Binder.SourceGeneration</InterceptorsNamespaces>
    </PropertyGroup>
@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <PackageReference Include="JsonFlatFileDataStore" Version="2.4.2" />
-    <PackageReference Include="LinkDotNet.BuildInformation" Version="2.1.4" />
+    <PackageReference Include="LinkDotNet.BuildInformation" Version="2.1.5" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
     <PackageReference Include="Material.Icons.WPF" Version="3.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
@@ -72,13 +72,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Warnings.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Alarms.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">

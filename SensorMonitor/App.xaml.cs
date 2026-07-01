@@ -58,7 +58,7 @@ namespace SensorMonitor
                 Shutdown();
                 return;
             }
-            Directory.CreateDirectory(@"C:\Raporty\Obrazy");
+          
             base.OnStartup(e);
             var mainWindow = Host!.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();

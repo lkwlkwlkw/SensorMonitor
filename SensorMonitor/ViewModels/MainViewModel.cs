@@ -316,23 +316,79 @@ namespace SensorMonitor.ViewModels
                 if (!_DBWriteActive) return;
                 _DBWriteActive = false;
                 _timer.Stop();
-                _dataBaseService.DatabaseClose(); // Zamknięcie bazy danych i przeniesienie pliku do folderu Raporty
 
-                var pngExporter = new PngExporter { Width = 1280, Height = 720 };
-                pngExporter.ExportToFile(TemperatureModel, $@"c:\Raporty\Obrazy\{_CycleStartTextFileName}_Temperatura.png");
-                pngExporter.ExportToFile(PressureModel, $@"c:\Raporty\Obrazy\{_CycleStartTextFileName}_Ciśnienie.png");
-                pngExporter.ExportToFile(WeightModel, $@"c:\Raporty\Obrazy\{_CycleStartTextFileName}_Waga.png");
+                // Zamknij bazę (DataBaseService już używa Task.Run przy dispose)
+                _dataBaseService.DatabaseClose();
 
-                if (DegassingInProgress) //Zatrzymanie odgazowania
+                // Klonowanie modeli wykresów — aby nie operować na UI-modelach w tle
+                var tempClone = OxyPlotCloner.CloneModel(TemperatureModel);
+                var pressClone = OxyPlotCloner.CloneModel(PressureModel);
+                var weightClone = OxyPlotCloner.CloneModel(WeightModel);
+
+                // Wyłącz przyciski / ewent. pokaż prosty komunikat/progress (opcjonalne)
+               // StopButtonEnabled = false;
+
+                // Wykonaj eksport w tle, by nie blokować UI
+                try
+                {
+                    // Uruchom eksport na nowym wątku STA i poczekaj asynchronicznie na jego zakończenie
+                    var tcs = new TaskCompletionSource<bool>();
+                    var staThread = new Thread(() =>
+                    {
+                        try
+                        {
+                            // Utworzenie Dispatcher dla wątku STA (potrzebne dla niektórych komponentów WPF)
+                            var dispatcher = Dispatcher.CurrentDispatcher;
+
+                            var pngExporter = new PngExporter { Width = 1280, Height = 720 };
+                            Directory.CreateDirectory(_settings.ReportsPath + @"\Obrazy");
+
+                            pngExporter.ExportToFile(tempClone, $@"{_settings.ReportsPath}\Obrazy\{_CycleStartTextFileName}_Temperatura.png");
+                            pngExporter.ExportToFile(pressClone, $@"{_settings.ReportsPath}\Obrazy\{_CycleStartTextFileName}_Ciśnienie.png");
+                            pngExporter.ExportToFile(weightClone, $@"{_settings.ReportsPath}\Obrazy\{_CycleStartTextFileName}_Waga.png");
+
+                            // zakończ dispatcher i sygnalizuj powodzenie
+                            tcs.SetResult(true);
+                        }
+                        catch (Exception ex)
+                        {
+                            tcs.SetException(ex);
+                        }
+                        finally
+                        {
+                            // zamknięcie Dispatcher'a wątku STA
+                            Dispatcher.CurrentDispatcher.InvokeShutdown();
+                        }
+                    });
+
+                    staThread.IsBackground = true;
+                    staThread.SetApartmentState(ApartmentState.STA);
+                    staThread.Start();
+
+                    await tcs.Task; // asynchronicznie czekamy bez blokowania UI
+                }
+                catch (Exception ex)
+                {
+                    var err = new ContentDialog
+                    {
+                        Title = "Błąd",
+                        Content = $"Eksport obrazów nie powiódł się: {ex.Message}",
+                        PrimaryButtonText = "OK",
+                        DefaultButton = ContentDialogButton.Primary
+                    };
+                    _ = err.ShowAsync();
+                }
+
+                // Jeżeli odgazowanie w toku — zatrzymaj (WriteData jest fire-and-forget)
+                if (DegassingInProgress)
                 {
                     DegassingInProgress = false;
                     var itemsToSend = new List<(string nodeId, object value)>
                     {
-                     (_settings.NodeIds.DegassingStart, false),
-                     };
+                        (_settings.NodeIds.DegassingStart, false),
+                    };
                     _plcConnectionService.WriteData(itemsToSend);
                 }
-
             }
         }
 
@@ -604,7 +660,7 @@ namespace SensorMonitor.ViewModels
             UpdateWarningsView();
             UpdateDegassingTimeRemaining();
 
-            if (!_DBWriteActive && !(_dataBaseService == null))
+            if (!_DBWriteActive || (_dataBaseService == null) || (_dataBaseService._dataStore == null))
                 return;
 
             if (_DBWriteTicksCounter == 0) //wyliczony na podstawie nastawy odczytu PLC i nastawy interwału zapisu do DB
@@ -618,35 +674,7 @@ namespace SensorMonitor.ViewModels
             {
                 _DBWriteTicksCounter = 0; // Reset licznika
             }
-        }
-
-        private void AlarmsUpdate()
-        {
-            // Implementacja aktualizacji listy alarmów na podstawie wartości otrzymanych z PLC
-            // Możesz tutaj przetłumaczyć wartości alarmów na tekst i zaktualizować interfejs użytkownika
-            // Uproszczona nie używana metoda
-
-            if (_AlarmsOld != _plcConnectionService.Alarms || _WarningsOld != _plcConnectionService.Warnings)
-            {
-                AlarmsAndWarningsTextList.Clear();
-                foreach (var bit in GetSetBits(_plcConnectionService.Alarms))
-                {
-                    if (bit < AlarmsTextList.Count)
-                        AlarmsAndWarningsTextList.Add(DateTime.Now.ToString("dd.MM HH:mm:ss") + " - " + AlarmsTextList[bit]);
-                    
-
-                }
-                foreach (var bit in GetSetBits(_plcConnectionService.Warnings))
-                {
-                    if (bit < WarningsTextList.Count)
-                        AlarmsAndWarningsTextList.Add(DateTime.Now.ToString("dd.MM HH:mm:ss") + " - " + WarningsTextList[bit]);
-                }
-            }
-
-            _AlarmsOld = _plcConnectionService.Alarms;
-            _WarningsOld = _plcConnectionService.Warnings;
-
-        }
+        }       
 
 
         public void UpdateAlarmsView()

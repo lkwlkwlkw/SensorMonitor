@@ -1,14 +1,16 @@
 ﻿using JsonFlatFileDataStore;
 using ModernWpf.Controls;
 using System.IO;
+using Microsoft.Extensions.Options;
 
 namespace SensorMonitor.Services
 {
     public class DataBaseService
     {
-        private DataStore _dataStore;
+        public DataStore _dataStore;
         public IDocumentCollection<Pomiar> Collection;
         //    private bool _StorageInitialized = false;
+        private readonly AppSettings _settings;
 
         public class Pomiar
         {
@@ -32,18 +34,24 @@ namespace SensorMonitor.Services
             public float Pressure1 { get; set; }
             public float Pressure2 { get; set; }
             public float Weight { get; set; }
+            
+        }
+
+        public DataBaseService(IOptionsMonitor<AppSettings> options)
+        {
+            _settings = options.CurrentValue;
+            Directory.CreateDirectory(_settings.ReportsPath);            
         }
 
         public void CreateNewFile(string orderName)
         {
-            Directory.CreateDirectory(@"C:\Raporty");
-            _dataStore = new DataStore($@"C:\Raporty\{DateTime.Now:yyyyMMddHHmm}_{orderName}.json");
+            Directory.CreateDirectory(_settings.ReportsPath);
+            _dataStore = new DataStore($@"{_settings.ReportsPath}\{DateTime.Now:yyyyMMddHHmmss}_{orderName}.json");
             Collection = _dataStore.GetCollection<Pomiar>("Pomiary");
         }
 
         public Boolean OpenExistingFile(string filePath)
         {
-
             try
             {
                 _dataStore = new DataStore(filePath);

@@ -8,6 +8,7 @@ public class AppSettings
     public NodeIds NodeIds { get; set; }
     public ScaleFactors ScaleFactors { get; set; }
     public bool StartWithWindows { get; set; }
+    public string ReportsPath { get; set; } 
 }
 
 public class NodeIds
