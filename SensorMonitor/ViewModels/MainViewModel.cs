@@ -801,7 +801,11 @@ namespace SensorMonitor.ViewModels
                 Temp10 = (float)Math.Round(_plcConnectionService.Temperature[9], 1),
                 Temp11 = (float)Math.Round(_plcConnectionService.Temperature[10], 1),
                 Temp12 = (float)Math.Round(_plcConnectionService.Temperature[11], 1),
-                Pressure1 = (float)Math.Round(_plcConnectionService.Pressure[0], 1),
+                 Temp13 = (float)Math.Round(_plcConnectionService.Temperature[12], 1),
+                 Temp14 = (float)Math.Round(_plcConnectionService.Temperature[13], 1),
+                 Temp15 = (float)Math.Round(_plcConnectionService.Temperature[14], 1),
+                 Temp16 = (float)Math.Round(_plcConnectionService.Temperature[15], 1),
+                 Pressure1 = (float)Math.Round(_plcConnectionService.Pressure[0], 1),
                 Pressure2 = (float)Math.Round(_plcConnectionService.Pressure[1], 1),
                 Weight = (float)Math.Round(_plcConnectionService.Weight, 3)
             });
