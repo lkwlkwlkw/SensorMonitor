@@ -15,6 +15,7 @@ namespace SensorMonitor.Services
         public class Pomiar
         {
             public DateTime Data { get; set; }
+            public string TimeSinceStart { get; set; }
             public float Temp1 { get; set; }
             public float Temp2 { get; set; }
             public float Temp3 { get; set; }

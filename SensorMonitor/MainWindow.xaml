@@ -14,7 +14,10 @@
     MinWidth="900"
     MinHeight="550"
     ui:WindowHelper.UseModernWindowStyle="True"
-    WindowState="Maximized">
+    WindowState="Maximized"
+    MouseMove="Window_MouseMove"
+    MouseDown="Window_MouseDown"
+    MouseWheel="Window_MouseWheel">
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">

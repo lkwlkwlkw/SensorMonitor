@@ -209,8 +209,6 @@ namespace SensorMonitor.ViewModels
             get { return BuildInformation.BuildAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm"); }
         }
 
-
-
         public bool NasycenieIsChecked
         {
             get => _nasycenieIsChecked;
@@ -232,8 +230,6 @@ namespace SensorMonitor.ViewModels
                 if (value) { NasycenieIsChecked = false; }
             }
         }
-
-
 
 
         public MainViewModel(PLCConnectionService _PLCConnectionService, DataBaseService Data, IOptionsMonitor<AppSettings> options)
@@ -269,9 +265,7 @@ namespace SensorMonitor.ViewModels
             _DBWriteTicksNeeded = (uint)(_settings.SaveToDBInterval / _settings.PLCPollingInterval); // Obliczenie, ile cykli odczytu PLC musi minąć, zanim dane zostaną zapisane do bazy danych
 
             LoadAlarmsAndWarningsText(); // Wczytanie treści alarmów i ostrzeżeń z plików tekstowych do listy, która będzie używana do aktualizacji interfejsu użytkownika
-
         }
-
 
         private void LoadAlarmsAndWarningsText() // Metoda do wczytywania treści alarmów i ostrzeżeń z plików tekstowych, jeśli chcesz odświeżyć treść bez ponownego uruchamiania aplikacji
         {
@@ -292,7 +286,6 @@ namespace SensorMonitor.ViewModels
                 dialog.ShowAsync();
             }
         }
-
 
         #region OnClick Events
         // Metody obsługujące kliknięcia przycisków
@@ -354,10 +347,7 @@ namespace SensorMonitor.ViewModels
                 // Klonowanie modeli wykresów — aby nie operować na UI-modelach w tle
                 var tempClone = OxyPlotCloner.CloneModel(TemperatureModel);
                 var pressClone = OxyPlotCloner.CloneModel(PressureModel);
-                var weightClone = OxyPlotCloner.CloneModel(WeightModel);
-
-                // Wyłącz przyciski / ewent. pokaż prosty komunikat/progress (opcjonalne)
-               // StopButtonEnabled = false;
+                var weightClone = OxyPlotCloner.CloneModel(WeightModel);                
 
                 // Wykonaj eksport w tle, by nie blokować UI
                 try
@@ -423,8 +413,7 @@ namespace SensorMonitor.ViewModels
             }
         }
 
-
-        private void OnClickPlotFormat(object obj) // Resetowanie osi wykresów do wartości domyślnych
+        public void OnClickPlotFormat(object obj) // Resetowanie osi wykresów do wartości domyślnych
         {
             TemperatureModel.ResetAllAxes();
             PressureModel.ResetAllAxes();
@@ -538,7 +527,6 @@ namespace SensorMonitor.ViewModels
                 {
                     var weightValue = (float)pomiar.GetType().GetProperty($"Weight").GetValue(pomiar);
                     AddPointToBoth(WeightModel, WeightModelCommon, DateTimeAxis.ToDouble(pomiar.Data), weightValue, 0);
-
                 }
 
                 TemperatureModel.InvalidatePlot(true);
@@ -588,7 +576,7 @@ namespace SensorMonitor.ViewModels
             this.TemperatureModel.Axes.Add(new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
-                StringFormat = "dd.MM HH:mm"
+                StringFormat = "dd.MM HH:mm"                                
             });
             this.TemperatureModel.Axes.Add(new LinearAxis
             {
@@ -686,7 +674,7 @@ namespace SensorMonitor.ViewModels
         private void PlcService_OnDataReceived() // Aktualizacja danych z PLC i odświeżenie wykresów
         {
             UpdateSensorFields();
-            UpdateWeightChange();
+            //UpdateWeightChange(); // Za często, pokazuje się waga chwilowa, a nie zmiana wagi od początku pomiaru
             UpdateAlarmsView();
             UpdateWarningsView();
             UpdateDegassingTimeRemaining();
@@ -698,6 +686,7 @@ namespace SensorMonitor.ViewModels
             {
                 UpdatePlotsAfterPLCDataRcv();
                 UpdateDBWrite();
+                UpdateWeightChange();
             }
             _DBWriteTicksCounter++;
 
@@ -820,7 +809,8 @@ namespace SensorMonitor.ViewModels
              _dataBaseService.SavePomiar(new DataBaseService.Pomiar
             {
                 Data = DateTime.Now,
-                Temp1 = (float)Math.Round(_plcConnectionService.Temperature[0], 1),
+                 TimeSinceStart = (DateTime.Now - _startTime).ToString(@"mm\:ss"),
+                 Temp1 = (float)Math.Round(_plcConnectionService.Temperature[0], 1),
                 Temp2 = (float)Math.Round(_plcConnectionService.Temperature[1], 1),
                 Temp3 = (float)Math.Round(_plcConnectionService.Temperature[2], 1),
                 Temp4 = (float)Math.Round(_plcConnectionService.Temperature[3], 1),
