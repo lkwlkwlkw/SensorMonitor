@@ -169,9 +169,7 @@
                                     TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
-                            <ui:SimpleStackPanel
-                                Margin="5,3,5,5"
-                                Orientation="Vertical">
+                            <ui:SimpleStackPanel Margin="5,3,5,5" Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
                                     Text="Waga [kg]"
@@ -182,9 +180,7 @@
                                     TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
-                            <ui:SimpleStackPanel                                
-                                Margin="5,3,5,5"
-                                Orientation="Vertical">
+                            <ui:SimpleStackPanel Margin="5,3,5,5" Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
                                     Text="Zmiana wagi [g/min]"
@@ -195,9 +191,7 @@
                                     TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
-                            <ui:SimpleStackPanel                                
-                                Margin="5,3,5,5"
-                                Orientation="Vertical">
+                            <ui:SimpleStackPanel Margin="5,3,5,5" Orientation="Vertical">
                                 <TextBlock
                                     Background="LightGray"
                                     Text="Odgaz.pozostało [mmm:ss]"
@@ -205,14 +199,13 @@
                                 <TextBlock
                                     Background="WhiteSmoke"
                                     Text="{Binding DegassingTimeRemained, Converter={StaticResource SecondsToTime}}"
-                                    
                                     TextAlignment="Center" />
                             </ui:SimpleStackPanel>
 
                             <Button
                                 Width="170"
-                                Height="50"
-                                Margin="5,3,5,5"
+                                Height="45"
+                                Margin="5,2,5,2"
                                 HorizontalAlignment="Center"
                                 Background="LightGreen"
                                 Command="{Binding ClickStartCommand}"
@@ -229,8 +222,8 @@
 
                             <Button
                                 Width="170"
-                                Height="50"
-                                Margin="5,3,5,5"
+                                Height="45"
+                                Margin="5,2,5,2"
                                 HorizontalAlignment="Center"
                                 Background="PaleVioletRed"
                                 Command="{Binding ClickStopCommand}"
@@ -247,8 +240,8 @@
 
                             <Button
                                 Width="170"
-                                Height="50"
-                                Margin="5,3,5,5"
+                                Height="45"
+                                Margin="5,2,5,2"
                                 HorizontalAlignment="Center"
                                 Command="{Binding ClickPlotFormatCommand}">
                                 <ui:SimpleStackPanel Orientation="Horizontal">
@@ -262,11 +255,11 @@
                             </Button>
                             <Button
                                 Width="170"
-                                Height="50"
-                                Margin="5,3,5,5"
+                                Height="45"
+                                Margin="5,2,5,2"
                                 HorizontalAlignment="Center"
                                 Command="{Binding ClickOpenFileCommand}"
-                                IsEnabled="{Binding StopButtonEnabled, Converter={StaticResource Not}}" >
+                                IsEnabled="{Binding StopButtonEnabled, Converter={StaticResource Not}}">
                                 <ui:SimpleStackPanel Orientation="Horizontal">
                                     <materialIcons:MaterialIcon
                                         Height="20"
@@ -278,7 +271,7 @@
                             </Button>
 
                             <ui:NumberBox
-                                Margin="5,3,5,5"
+                                Margin="5,2,5,2"
                                 Header="Czas odgazowania [min]"
                                 LargeChange="10"
                                 Maximum="999"
@@ -289,18 +282,17 @@
 
                             <Button
                                 Width="170"
-                                Height="50"
-                                Margin="5,3,5,5"
+                                Height="45"
+                                Margin="5,2,5,2"
                                 HorizontalAlignment="Center"
                                 Command="{Binding ClickDegassing}"
                                 IsEnabled="{Binding StopButtonEnabled}">
                                 <Button.Style>
-                                    <Style TargetType="Button"     BasedOn="{StaticResource {x:Type Button}}"   >
+                                    <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding DegassingInProgress}" Value="True">
                                                 <Setter Property="Background" Value="LightGreen" />
                                             </DataTrigger>
-                                            
                                         </Style.Triggers>
                                     </Style>
                                 </Button.Style>
@@ -313,9 +305,43 @@
                                         Kind="Gas" />
                                     <TextBlock Margin="6,0,0,0" Text="Odgazowanie" />
                                 </ui:SimpleStackPanel>
-
-
                             </Button>
+
+                            <ToggleButton
+                                Width="170"
+                                Height="45"
+                                Margin="5,2,5,2"
+                                HorizontalAlignment="Center"
+                                IsChecked="{Binding NasycenieIsChecked}"
+                                IsEnabled="{Binding StopButtonEnabled}">
+                                <ui:SimpleStackPanel Orientation="Horizontal">
+                                    <materialIcons:MaterialIcon
+                                        Height="20"
+                                        Animation="Pulse"
+                                        Foreground="Black"
+                                        Kind="VideoStabilisation" />
+                                    <TextBlock Margin="6,0,0,0" Text="Nasycenie" />
+                                </ui:SimpleStackPanel>
+                            </ToggleButton>
+
+
+                            <ToggleButton
+                                Width="170"
+                                Height="45"
+                                Margin="5,2,5,2"
+                                HorizontalAlignment="Center"
+                                IsChecked="{Binding UtwardzanieIsChecked}"
+                                IsEnabled="{Binding StopButtonEnabled}">
+                                <ui:SimpleStackPanel Orientation="Horizontal">
+                                    <materialIcons:MaterialIcon
+                                        Height="20"
+                                        Animation="Pulse"
+                                        Foreground="Black"
+                                        Kind="HardHat" />
+                                    <TextBlock Margin="6,0,0,0" Text="Utwardzanie" />
+                                </ui:SimpleStackPanel>
+                            </ToggleButton>
+
 
                         </ui:SimpleStackPanel>
                     </ScrollViewer>
@@ -740,12 +766,20 @@
                         FontWeight="Bold"
                         Text="{Binding AssemblyBuildDate, StringFormat='Skompilowano: {0}'}" />
 
-                    <TextBlock Margin="0,20,0,0"  HorizontalAlignment="Left">
-                       <Bold>Instrukcja:</Bold> <LineBreak />
-                        Prawy klawisz myszy + ruch  <Run Text="     "/>:<Run Text=" "/>  przesuwanie wykresu<LineBreak />
-                        Kółko myszy <Run Text="                            "/> : <Run Text=" "/> skalowanie wykresu<LineBreak />
-                        Przycisk "Domyślne" <Run Text=" "/> : <Run Text=" "/> przywraca domyślne skalowanie<LineBreak />
-                        Przycisk "Wczytaj"     <Run Text="     "/> : <Run Text=" "/> wczytuje historyczne zapisy<LineBreak />
+                    <TextBlock Margin="0,20,0,0" HorizontalAlignment="Left">
+                        <Bold>Instrukcja:</Bold> <LineBreak />
+                        Prawy klawisz myszy + ruch<Run Text="     " />
+                        :<Run Text=" " />
+                        przesuwanie wykresu<LineBreak />
+                        Kółko myszy<Run Text="                            " />
+                        :<Run Text=" " />
+                        skalowanie wykresu<LineBreak />
+                        Przycisk "Domyślne"<Run Text=" " />
+                        :<Run Text=" " />
+                        przywraca domyślne skalowanie<LineBreak />
+                        Przycisk "Wczytaj"<Run Text="     " />
+                        :<Run Text=" " />
+                        wczytuje historyczne zapisy<LineBreak />
 
 
                     </TextBlock>

@@ -70,6 +70,10 @@ namespace SensorMonitor.ViewModels
         private bool _DegassingInProgress=false;
         private Int32 _DegassingTimeRemained = 0;
 
+        private bool _nasycenieIsChecked = false;
+        private bool _utwardzanieIsChecked = false;
+
+
         public bool StopButtonEnabled
         {
             get => _StopButtonEnabled;
@@ -204,6 +208,33 @@ namespace SensorMonitor.ViewModels
         {
             get { return BuildInformation.BuildAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm"); }
         }
+
+
+
+        public bool NasycenieIsChecked
+        {
+            get => _nasycenieIsChecked;
+            set
+            {
+                _nasycenieIsChecked = value;
+                OnPropertyChanged();
+                if (value) { DegassingInProgress = false; }
+            }
+        }
+
+        public bool UtwardzanieIsChecked
+        {
+            get => _utwardzanieIsChecked;
+            set
+            {
+                _utwardzanieIsChecked = value;
+                OnPropertyChanged();
+                if (value) { NasycenieIsChecked = false; }
+            }
+        }
+
+
+
 
         public MainViewModel(PLCConnectionService _PLCConnectionService, DataBaseService Data, IOptionsMonitor<AppSettings> options)
         {
