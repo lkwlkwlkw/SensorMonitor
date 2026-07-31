@@ -305,7 +305,7 @@
                                 Height="45"
                                 Margin="5,2,5,2"
                                 HorizontalAlignment="Center"
-                                IsChecked="{Binding NasycenieIsChecked}"
+                                IsChecked="{Binding SaturationIsChecked}"
                                 IsEnabled="{Binding SaturationButtonEnabled}">
                                 <ui:SimpleStackPanel Orientation="Horizontal">
                                     <materialIcons:MaterialIcon
@@ -323,7 +323,7 @@
                                 Height="45"
                                 Margin="5,2,5,2"
                                 HorizontalAlignment="Center"
-                                IsChecked="{Binding UtwardzanieIsChecked}"
+                                IsChecked="{Binding HardeningIsChecked}"
                                 IsEnabled="{Binding HardeningButtonEnabled}">
                                 <ui:SimpleStackPanel Orientation="Horizontal">
                                     <materialIcons:MaterialIcon
