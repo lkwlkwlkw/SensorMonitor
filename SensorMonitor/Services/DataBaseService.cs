@@ -35,7 +35,10 @@ namespace SensorMonitor.Services
             public float Pressure1 { get; set; }
             public float Pressure2 { get; set; }
             public float Weight { get; set; }
-            
+            public bool DegassingActive { get; set; } = false;
+            public bool SaturationActive { get; set; } = false;
+            public bool HardeningActive { get; set; } = false;  
+
         }
 
         public DataBaseService(IOptionsMonitor<AppSettings> options)

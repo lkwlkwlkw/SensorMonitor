@@ -11,9 +11,9 @@
     <StartupObject></StartupObject>
 	<Nullable>disable</Nullable>
 	<IncrementVersionOnBuild>1.yyyy.Mdd.Hmm</IncrementVersionOnBuild>
-	<AssemblyVersion>1.1.1.0</AssemblyVersion>
-	<FileVersion>1.1.1.0</FileVersion>
-	<Version>1.1.1.0</Version>
+	<AssemblyVersion>1.2.0.0</AssemblyVersion>
+	<FileVersion>1.2.0.0</FileVersion>
+	<Version>1.2.0.0</Version>
 	  <EnableInterceptors>true</EnableInterceptors>
 	  <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.Extensions.Configuration.Binder.SourceGeneration</InterceptorsNamespaces>
    </PropertyGroup>

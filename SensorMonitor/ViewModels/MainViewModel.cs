@@ -40,8 +40,7 @@ namespace SensorMonitor.ViewModels
         public ICommand ClickStartCommand { get; }
         public ICommand ClickStopCommand { get; }
         public ICommand ClickPlotFormatCommand { get; }
-        public ICommand ClickOpenFileCommand { get; }
-        public ICommand ClickDegassing { get; }
+        public ICommand ClickOpenFileCommand { get; }        
         private string _CycleDurationText = "00:00:00";
         private string _CycleStartText = "00:00:00";
         private string _CycleStartTextFileName;
@@ -62,17 +61,20 @@ namespace SensorMonitor.ViewModels
         private uint _DBWriteTicksNeeded;
         private readonly AppSettings _settings;
         private bool _StopButtonEnabled;
+        private bool _DegassingButtonEnabled;
+        private bool _SaturationButtonEnabled;
+        private bool _HardeningButtonEnabled;
         private List<string> AlarmsTextList;
         private List<string> WarningsTextList;
         private ObservableCollection<string> _AlarmsAndWarningsTextList = new();
         private UInt32 _AlarmsOld;
         private UInt32 _WarningsOld;
-        private bool _DegassingInProgress=false;
+       // private bool _DegassingInProgress = false;
         private Int32 _DegassingTimeRemained = 0;
 
         private bool _nasycenieIsChecked = false;
         private bool _utwardzanieIsChecked = false;
-
+        private bool _degassingIsChecked = false;
 
         public bool StopButtonEnabled
         {
@@ -81,7 +83,7 @@ namespace SensorMonitor.ViewModels
             {
                 _StopButtonEnabled = value;
                 OnPropertyChanged(nameof(StopButtonEnabled));
-                CommandManager.InvalidateRequerySuggested();// Powiadom WPF, że CanExecute mogło się zmienić
+                CommandManager.InvalidateRequerySuggested();// Powiadom WPF, że CanExecute mogło się zmienić                
             }
         }
 
@@ -98,15 +100,52 @@ namespace SensorMonitor.ViewModels
             }
         }
 
-        public bool DegassingInProgress
+        public bool DegassingButtonEnabled
         {
-            get => _DegassingInProgress;
+            get => _DegassingButtonEnabled;
             set
             {
-                _DegassingInProgress = value;
-                OnPropertyChanged();
-             }
+                _DegassingButtonEnabled = value;
+                OnPropertyChanged(nameof(DegassingButtonEnabled));
+               //OnPropertyChanged();
+                CommandManager.InvalidateRequerySuggested();// Powiadom WPF, że CanExecute mogło się zmienić
+            }
         }
+
+        public bool HardeningButtonEnabled
+        {
+            get => _HardeningButtonEnabled;
+            set
+            {
+                _HardeningButtonEnabled = value;
+                // OnPropertyChanged(nameof(DegassingButtonEnabled));
+                OnPropertyChanged();
+                CommandManager.InvalidateRequerySuggested();// Powiadom WPF, że CanExecute mogło się zmienić
+            }
+        }
+
+        public bool SaturationButtonEnabled
+        {
+            get => _SaturationButtonEnabled;
+            set
+            {
+                _SaturationButtonEnabled = value;
+                // OnPropertyChanged(nameof(DegassingButtonEnabled));
+                OnPropertyChanged();
+                CommandManager.InvalidateRequerySuggested();// Powiadom WPF, że CanExecute mogło się zmienić
+            }
+        }
+
+
+        //public bool DegassingInProgress
+        //{
+        //    get => _DegassingInProgress;
+        //    set
+        //    {
+        //        _DegassingInProgress = value;
+        //        OnPropertyChanged();
+        //    }
+        //}
 
         public string CycleDurationText
         {
@@ -209,6 +248,52 @@ namespace SensorMonitor.ViewModels
             get { return BuildInformation.BuildAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm"); }
         }
 
+
+        
+        //public void OnClickDegassing(object obj)
+        //{
+        //    if (!DegassingInProgress)
+        //    {
+        //        var itemsToSend = new List<(string nodeId, object value)>
+        //    {
+        //     (_settings.NodeIds.DegassingStart, true),
+        //     (_settings.NodeIds.DegassingTime, _DegassingTime),
+        //     };
+        //        _plcConnectionService.WriteData(itemsToSend);
+        //    }
+        //    else
+        //    {
+        //        var itemsToSend = new List<(string nodeId, object value)>
+        //    {
+        //     (_settings.NodeIds.DegassingStart, false),
+        //     };
+        //        _plcConnectionService.WriteData(itemsToSend);
+        //    }
+        //    DegassingInProgress = !DegassingInProgress;
+        //}
+
+
+
+        public bool DegassingIsChecked
+        {
+            get => _degassingIsChecked;
+            set
+            {
+                _degassingIsChecked = value;
+                OnPropertyChanged();
+             //  if (value) { SaturationButtonEnabled = true; }
+                if (!NasycenieIsChecked) { SaturationButtonEnabled = value; }
+                ;
+
+                var itemsToSend = new List<(string nodeId, object value)> //przesłanie stanu nasycenia do PLC
+                        {
+                         (_settings.NodeIds.DegassingStart, value),
+                         (_settings.NodeIds.DegassingTime, _DegassingTime),
+                        };
+                _plcConnectionService.WriteData(itemsToSend);
+            }
+        }
+
         public bool NasycenieIsChecked
         {
             get => _nasycenieIsChecked;
@@ -216,7 +301,17 @@ namespace SensorMonitor.ViewModels
             {
                 _nasycenieIsChecked = value;
                 OnPropertyChanged();
-                if (value) { DegassingInProgress = false; }
+
+                DegassingButtonEnabled = !value;
+                if (!UtwardzanieIsChecked) { HardeningButtonEnabled = value; };
+                if (value) { DegassingIsChecked = false; }
+                if (!value) { SaturationButtonEnabled = false; }
+
+                var itemsToSend = new List<(string nodeId, object value)> //przesłanie stanu nasycenia do PLC
+                        {
+                         (_settings.NodeIds.SaturationActive, value),
+                        };
+                    _plcConnectionService.WriteData(itemsToSend);                
             }
         }
 
@@ -227,7 +322,17 @@ namespace SensorMonitor.ViewModels
             {
                 _utwardzanieIsChecked = value;
                 OnPropertyChanged();
+
+                SaturationButtonEnabled = !value;
+                DegassingButtonEnabled = !value;
                 if (value) { NasycenieIsChecked = false; }
+                if (!value) { HardeningButtonEnabled = false; }
+
+                var itemsToSend = new List<(string nodeId, object value)> //przesłanie stanu nasycenia do PLC
+                        {
+                         (_settings.NodeIds.HardeningActive, value),
+                        };
+                _plcConnectionService.WriteData(itemsToSend);
             }
         }
 
@@ -239,8 +344,7 @@ namespace SensorMonitor.ViewModels
             ClickStartCommand = new RelayCommand(OnStartClick);
             ClickStopCommand = new RelayCommand(OnStopClick);
             ClickPlotFormatCommand = new RelayCommand(OnClickPlotFormat);
-            ClickOpenFileCommand = new RelayCommand(OnClickOpenFile);
-            ClickDegassing = new RelayCommand(OnClickDegassing);
+            ClickOpenFileCommand = new RelayCommand(OnClickOpenFile);            
             _dataBaseService = Data; // Iniekcja zależności usługi bazy danych                                    
 
             InitializePressurePlot();
@@ -294,6 +398,7 @@ namespace SensorMonitor.ViewModels
         {
             StartButtonEnabled = false;
             StopButtonEnabled = true;
+            DegassingButtonEnabled = true;
             if (_DBWriteActive)
                 return;
             _oldWeight = 0; // Reset zmiany wagi przy każdym rozpoczęciu pomiaru
@@ -337,6 +442,9 @@ namespace SensorMonitor.ViewModels
             {
                 StartButtonEnabled = true;
                 StopButtonEnabled = false;
+                DegassingButtonEnabled = false;
+                SaturationButtonEnabled = false;
+                HardeningButtonEnabled = false;
                 if (!_DBWriteActive) return;
                 _DBWriteActive = false;
                 _timer.Stop();
@@ -347,7 +455,7 @@ namespace SensorMonitor.ViewModels
                 // Klonowanie modeli wykresów — aby nie operować na UI-modelach w tle
                 var tempClone = OxyPlotCloner.CloneModel(TemperatureModel);
                 var pressClone = OxyPlotCloner.CloneModel(PressureModel);
-                var weightClone = OxyPlotCloner.CloneModel(WeightModel);                
+                var weightClone = OxyPlotCloner.CloneModel(WeightModel);
 
                 // Wykonaj eksport w tle, by nie blokować UI
                 try
@@ -400,16 +508,15 @@ namespace SensorMonitor.ViewModels
                     _ = err.ShowAsync();
                 }
 
-                // Jeżeli odgazowanie w toku — zatrzymaj (WriteData jest fire-and-forget)
-                if (DegassingInProgress)
-                {
-                    DegassingInProgress = false;
+               // Wyłącz wszelkie stany do PLC
                     var itemsToSend = new List<(string nodeId, object value)>
                     {
                         (_settings.NodeIds.DegassingStart, false),
+                        (_settings.NodeIds.HardeningActive, false),
+                        (_settings.NodeIds.SaturationActive, false),
                     };
                     _plcConnectionService.WriteData(itemsToSend);
-                }
+               
             }
         }
 
@@ -444,29 +551,7 @@ namespace SensorMonitor.ViewModels
                 string path = dialog.FileName;
                 LoadDataFromDatabase(path);
             }
-        }
-
-        private void OnClickDegassing(object obj)
-        {
-          if (!DegassingInProgress)
-          {
-            var itemsToSend = new List<(string nodeId, object value)>
-            {
-             (_settings.NodeIds.DegassingStart, true),
-             (_settings.NodeIds.DegassingTime, _DegassingTime),
-             };
-            _plcConnectionService.WriteData(itemsToSend);
-          }
-            else
-            {
-                var itemsToSend = new List<(string nodeId, object value)>
-            {
-             (_settings.NodeIds.DegassingStart, false),
-             };
-                _plcConnectionService.WriteData(itemsToSend);
-            }
-            DegassingInProgress = !DegassingInProgress;
-        }
+        }        
 
         #endregion
 
@@ -576,7 +661,7 @@ namespace SensorMonitor.ViewModels
             this.TemperatureModel.Axes.Add(new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
-                StringFormat = "dd.MM HH:mm"                                
+                StringFormat = "dd.MM HH:mm"
             });
             this.TemperatureModel.Axes.Add(new LinearAxis
             {
@@ -694,17 +779,17 @@ namespace SensorMonitor.ViewModels
             {
                 _DBWriteTicksCounter = 0; // Reset licznika
             }
-        }       
+        }
 
 
         public void UpdateAlarmsView()
         {
             UInt32 _changedErrors = _AlarmsOld ^ _plcConnectionService.Alarms; // bity które się zmieniły
             UInt32 _alarmsToAdd = _changedErrors & _plcConnectionService.Alarms;
-            UInt32 _alarmsToRemove = _changedErrors & _AlarmsOld;            
-            
-                foreach (var bit in GetSetBits(_alarmsToRemove))
-                {
+            UInt32 _alarmsToRemove = _changedErrors & _AlarmsOld;
+
+            foreach (var bit in GetSetBits(_alarmsToRemove))
+            {
                 for (int i = 0; i < AlarmsAndWarningsTextList.Count; i++)
                 {
                     if (AlarmsAndWarningsTextList[i].Contains(AlarmsTextList[bit]))
@@ -713,14 +798,14 @@ namespace SensorMonitor.ViewModels
                         var _textLine = DateTime.Now.ToString("yy.dd.MM HH:mm:ss") + " - " + AlarmsTextList[bit];
                         SaveAlarmsAndWarningsToFile(_textLine + " (Outgoing)");
                     }
-                }                    
                 }
+            }
 
             foreach (var bit in GetSetBits(_alarmsToAdd))
             {
                 var _textLine = DateTime.Now.ToString("yy.dd.MM HH:mm:ss") + " - " + AlarmsTextList[bit];
                 AlarmsAndWarningsTextList.Add(_textLine);
-                SaveAlarmsAndWarningsToFile(_textLine +" (Incoming)");
+                SaveAlarmsAndWarningsToFile(_textLine + " (Incoming)");
             }
             _AlarmsOld = _plcConnectionService.Alarms;
         }
@@ -747,7 +832,7 @@ namespace SensorMonitor.ViewModels
 
             foreach (var bit in GetSetBits(_warningsToAdd))
             {
-               var _textLine = DateTime.Now.ToString("yy.dd.MM HH:mm:ss") + " - " + WarningsTextList[bit];
+                var _textLine = DateTime.Now.ToString("yy.dd.MM HH:mm:ss") + " - " + WarningsTextList[bit];
                 AlarmsAndWarningsTextList.Add(_textLine);
                 SaveAlarmsAndWarningsToFile(_textLine + " (Incoming)");
             }
@@ -804,13 +889,13 @@ namespace SensorMonitor.ViewModels
             this.WeightModelCommon.InvalidatePlot(true);
         }
 
-        private  void UpdateDBWrite()
+        private void UpdateDBWrite()
         {
-             _dataBaseService.SavePomiar(new DataBaseService.Pomiar
+            _dataBaseService.SavePomiar(new DataBaseService.Pomiar
             {
                 Data = DateTime.Now,
-                 TimeSinceStart = (DateTime.Now - _startTime).ToString(@"mm\:ss"),
-                 Temp1 = (float)Math.Round(_plcConnectionService.Temperature[0], 1),
+                TimeSinceStart = (DateTime.Now - _startTime).ToString(@"mm\:ss"),
+                Temp1 = (float)Math.Round(_plcConnectionService.Temperature[0], 1),
                 Temp2 = (float)Math.Round(_plcConnectionService.Temperature[1], 1),
                 Temp3 = (float)Math.Round(_plcConnectionService.Temperature[2], 1),
                 Temp4 = (float)Math.Round(_plcConnectionService.Temperature[3], 1),
@@ -822,11 +907,11 @@ namespace SensorMonitor.ViewModels
                 Temp10 = (float)Math.Round(_plcConnectionService.Temperature[9], 1),
                 Temp11 = (float)Math.Round(_plcConnectionService.Temperature[10], 1),
                 Temp12 = (float)Math.Round(_plcConnectionService.Temperature[11], 1),
-                 Temp13 = (float)Math.Round(_plcConnectionService.Temperature[12], 1),
-                 Temp14 = (float)Math.Round(_plcConnectionService.Temperature[13], 1),
-                 Temp15 = (float)Math.Round(_plcConnectionService.Temperature[14], 1),
-                 Temp16 = (float)Math.Round(_plcConnectionService.Temperature[15], 1),
-                 Pressure1 = (float)Math.Round(_plcConnectionService.Pressure[0], 1),
+                Temp13 = (float)Math.Round(_plcConnectionService.Temperature[12], 1),
+                Temp14 = (float)Math.Round(_plcConnectionService.Temperature[13], 1),
+                Temp15 = (float)Math.Round(_plcConnectionService.Temperature[14], 1),
+                Temp16 = (float)Math.Round(_plcConnectionService.Temperature[15], 1),
+                Pressure1 = (float)Math.Round(_plcConnectionService.Pressure[0], 1),
                 Pressure2 = (float)Math.Round(_plcConnectionService.Pressure[1], 1),
                 Weight = (float)Math.Round(_plcConnectionService.Weight, 3)
             });
@@ -926,7 +1011,7 @@ namespace SensorMonitor.ViewModels
             if (value is Int32 seconds)
             {
                 TimeSpan time = TimeSpan.FromSeconds(seconds);
-                string formatted =  (time < TimeSpan.Zero ? "-" : "+") + ((int)time.Duration().TotalMinutes).ToString("000") + time.Duration().ToString(@"\:ss");                
+                string formatted = (time < TimeSpan.Zero ? "-" : "+") + ((int)time.Duration().TotalMinutes).ToString("000") + time.Duration().ToString(@"\:ss");
                 // return time.ToString(@"mm\:ss");
                 return formatted;
             }
@@ -937,4 +1022,4 @@ namespace SensorMonitor.ViewModels
     }
 
 
-    }
+}

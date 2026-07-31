@@ -37,6 +37,8 @@ public class NodeIds
     public string DegassingTimeRemained { get; set; }
     public string Alarms { get; set; }
     public string Warnings { get; set; }
+    public string SaturationActive { get; set; }
+    public string HardeningActive { get; set; }
 }
 public class ScaleFactors
 {
