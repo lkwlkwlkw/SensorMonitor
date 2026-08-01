@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DeepCloner" Version="0.10.4" />
     <PackageReference Include="JsonFlatFileDataStore" Version="2.4.2" />
     <PackageReference Include="LinkDotNet.BuildInformation" Version="2.1.5" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />

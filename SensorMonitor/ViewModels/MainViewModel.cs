@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Force.DeepCloner;
+using Microsoft.Extensions.Options;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using ModernWpf.Controls;
 using OxyPlot;
+using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
@@ -9,14 +11,15 @@ using OxyPlot.Wpf;
 using SensorMonitor.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
-using System.IO;
-using System.Diagnostics;
+using static SensorMonitor.Services.DataBaseService;
 
 
 
@@ -106,8 +109,8 @@ namespace SensorMonitor.ViewModels
             set
             {
                 _DegassingButtonEnabled = value;
-                OnPropertyChanged(nameof(DegassingButtonEnabled));
-               //OnPropertyChanged();
+                //OnPropertyChanged(nameof(DegassingButtonEnabled));
+               OnPropertyChanged();
                 CommandManager.InvalidateRequerySuggested();// Powiadom WPF, że CanExecute mogło się zmienić
             }
         }
@@ -422,8 +425,15 @@ namespace SensorMonitor.ViewModels
         #region OnClick Events
         // Metody obsługujące kliknięcia przycisków
 
+       
+        private TimeSpan CycleTime;
         private void OnStartClick(object parameter)
         {
+            degassingActiveLastState = false; //nie bieżemy pod uwagę stanu przy starcie, żeby nie dodawać adnotacji na wykresie przy starcie pomiaru
+            saturationActiveLastState = false;
+            hardeningActiveLastState = false;
+
+
             StartButtonEnabled = false;
             StopButtonEnabled = true;
             DegassingButtonEnabled = true;
@@ -443,8 +453,8 @@ namespace SensorMonitor.ViewModels
             _timer.Interval = TimeSpan.FromSeconds(1);
             _timer.Tick += (s, e) =>
             {
-                TimeSpan _CycleTime = DateTime.Now - _startTime;
-                CycleDurationText = _CycleTime.ToString(@"hh\:mm\:ss");
+                CycleTime = DateTime.Now - _startTime;
+                CycleDurationText = CycleTime.ToString(@"hh\:mm\:ss");
             };
             _timer.Start();
             _dataBaseService.CreateNewFile(_OrderNameText); // Tworzenie nowego pliku bazy danych przy każdym rozpoczęciu pomiaru
@@ -470,15 +480,23 @@ namespace SensorMonitor.ViewModels
             {
                 StartButtonEnabled = true;
                 StopButtonEnabled = false;
-                DegassingButtonEnabled = false;
+                
+                DegassingIsChecked = false;
+                SaturationIsChecked = false;
+                HardeningIsChecked = false;
+                
                 SaturationButtonEnabled = false;
                 HardeningButtonEnabled = false;
+                DegassingButtonEnabled = false;
                 if (!_DBWriteActive) return;
                 _DBWriteActive = false;
                 _timer.Stop();
 
                 // Zamknij bazę (DataBaseService już używa Task.Run przy dispose)
+                
+                
                 _dataBaseService.DatabaseClose();
+
 
                 // Klonowanie modeli wykresów — aby nie operować na UI-modelach w tle
                 var tempClone = OxyPlotCloner.CloneModel(TemperatureModel);
@@ -572,7 +590,7 @@ namespace SensorMonitor.ViewModels
             //var dialog = new CommonOpenFileDialog();
             dialog.Title = "Wybierz plik";
             dialog.Filters.Add(new CommonFileDialogFilter("Pliki JSON", "*.json"));
-            dialog.InitialDirectory = @"C:\Raporty";
+            dialog.InitialDirectory = _settings.ReportsPath;
             dialog.Multiselect = false;
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
@@ -591,7 +609,82 @@ namespace SensorMonitor.ViewModels
             var s2 = (LineSeries)clone.Series[SerieNumber];
             s1.Points.Add(p);
             s2.Points.Add(new DataPoint(x, y));
+            //if (DegassingIsChecked)
+            //{
+            //    var Annotation1 = new LineAnnotation
+            //    {
+            //        Type = LineAnnotationType.Vertical,
+            //        X = x,
+            //        MinimumX = double.NegativeInfinity,
+            //        MaximumX = double.PositiveInfinity,
+            //        MinimumY = double.NegativeInfinity,
+            //        MaximumY = double.PositiveInfinity,
+            //        Color = OxyColors.Green,
+            //        StrokeThickness = 2,
+
+            //        Text = "Załączono odgazowanie",
+            //        TextColor = OxyColors.Red,
+            //        TextOrientation = AnnotationTextOrientation.Vertical,
+            //      //  TextHorizontalAlignment = HorizontalAlignment.Left,
+            //       // TextVerticalAlignment = VerticalAlignment.Top
+            //    };
+
+            //    var Annotation2 = Annotation1.DeepClone();
+
+            //    original.Annotations.Add(Annotation1);
+            //    clone.Annotations.Add(Annotation2);
+            //}                    
         }
+
+        private  void AddAnnotation (PlotModel model, double x, string text)
+        {
+            var annotation = new LineAnnotation
+            {
+                Type = LineAnnotationType.Vertical,
+                X = x,
+                MinimumX = double.NegativeInfinity,
+                MaximumX = double.PositiveInfinity,
+                MinimumY = double.NegativeInfinity,
+                MaximumY = double.PositiveInfinity,
+                Color = OxyColors.Green,
+                StrokeThickness = 2,
+                Text = text,
+                TextColor = OxyColors.Red,
+                TextOrientation = AnnotationTextOrientation.Vertical
+            };
+            model.Annotations.Add(annotation);
+        }
+
+        private bool degassingActiveLastState = false;
+        private bool saturationActiveLastState = false;
+        private bool hardeningActiveLastState = false;
+        private string CreateAnnotationText(bool _degassingActive, bool _saturationActive, bool _hardeningActive, String _cycleTime)
+        {
+           var degassingStart = _degassingActive && !degassingActiveLastState;
+           var degassingStop = !_degassingActive && degassingActiveLastState;
+            var saturationStart = _saturationActive && !saturationActiveLastState;
+            var saturationStop = !_saturationActive && saturationActiveLastState;
+            var hardeningStart = _hardeningActive && !hardeningActiveLastState;
+            var hardeningStop = !_hardeningActive && hardeningActiveLastState;
+            if (!degassingStart && !degassingStop && !saturationStart && !saturationStop && !hardeningStart && !hardeningStop)
+            {
+                return null; // Nie dodawaj adnotacji, jeśli nie ma zmiany stanu
+            }
+            var annotationText = _cycleTime + " ";
+            if (degassingStart) { annotationText += "Start odgazowanie\n"; }
+            if (degassingStop) { annotationText += "Stop odgazowanie\n"; }
+            if (saturationStart) { annotationText += "Start nasycenie\n"; }
+            if (saturationStop) { annotationText += "Stop nasycenie\n"; }
+            if (hardeningStart) { annotationText += "Start utwardzanie\n"; }           
+            if (hardeningStop) { annotationText += "Stop utwardzanie\n"; }
+            degassingActiveLastState = _degassingActive;
+            saturationActiveLastState = _saturationActive;
+            hardeningActiveLastState = _hardeningActive;
+            return annotationText;
+        }
+
+
+
 
         public void ResetPlotAndClearPoints(PlotModel model, bool invalidate)
         {
@@ -606,6 +699,11 @@ namespace SensorMonitor.ViewModels
 
         private void LoadDataFromDatabase(string filePath)
         {
+            degassingActiveLastState = false;
+            saturationActiveLastState = false;
+            hardeningActiveLastState = false;
+
+
             // Implementacja wczytywania danych z pliku bazy danych
             // Po wczytaniu danych, zaktualizuj wykresy
             ResetPlotAndClearPoints(TemperatureModel, false);
@@ -622,7 +720,7 @@ namespace SensorMonitor.ViewModels
                     foreach (var pomiar in _dataBaseService.Collection.AsQueryable())
                     {
                         var temperatureValue = (float)pomiar.GetType().GetProperty($"Temp{seriesIndex + 1}").GetValue(pomiar);
-                        AddPointToBoth(TemperatureModel, TemperatureModelCommon, DateTimeAxis.ToDouble(pomiar.Data), temperatureValue, seriesIndex);
+                        AddPointToBoth(TemperatureModel, TemperatureModelCommon, DateTimeAxis.ToDouble(pomiar.Data), temperatureValue, seriesIndex); 
                     }
                 }
 
@@ -642,6 +740,26 @@ namespace SensorMonitor.ViewModels
                     AddPointToBoth(WeightModel, WeightModelCommon, DateTimeAxis.ToDouble(pomiar.Data), weightValue, 0);
                 }
 
+                //dodaj znaczniki
+                foreach (var pomiar in _dataBaseService.Collection.AsQueryable())
+                {
+                    var AnnotationText = CreateAnnotationText((bool)pomiar.GetType().GetProperty($"DegassingActive").GetValue(pomiar),
+                        (bool)pomiar.GetType().GetProperty($"SaturationActive").GetValue(pomiar),
+                        (bool)pomiar.GetType().GetProperty($"HardeningActive").GetValue(pomiar),
+                        (string)pomiar.GetType().GetProperty($"TimeSinceStart").GetValue(pomiar));
+
+                    if (AnnotationText != null)
+                    {
+                        AddAnnotation(TemperatureModel, DateTimeAxis.ToDouble(pomiar.Data), AnnotationText);
+                        AddAnnotation(TemperatureModelCommon, DateTimeAxis.ToDouble(pomiar.Data), AnnotationText);
+                        AddAnnotation(PressureModel, DateTimeAxis.ToDouble(pomiar.Data), AnnotationText);
+                        AddAnnotation(PressureModelCommon, DateTimeAxis.ToDouble(pomiar.Data), AnnotationText);
+                        AddAnnotation(WeightModel, DateTimeAxis.ToDouble(pomiar.Data), AnnotationText);
+                        AddAnnotation(WeightModelCommon, DateTimeAxis.ToDouble(pomiar.Data), AnnotationText);
+                    }
+                }
+
+                // Po wczytaniu danych z bazy, odśwież wykresy
                 TemperatureModel.InvalidatePlot(true);
                 TemperatureModelCommon.InvalidatePlot(true);
                 PressureModel.InvalidatePlot(true);
@@ -689,7 +807,7 @@ namespace SensorMonitor.ViewModels
             this.TemperatureModel.Axes.Add(new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
-                StringFormat = "dd.MM HH:mm"
+                StringFormat = "HH:mm"
             });
             this.TemperatureModel.Axes.Add(new LinearAxis
             {
@@ -720,7 +838,7 @@ namespace SensorMonitor.ViewModels
             this.PressureModel.Axes.Add(new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
-                StringFormat = "dd.MM HH:mm"
+                StringFormat = "HH:mm"
             });
             this.PressureModel.Axes.Add(new LinearAxis
             {
@@ -749,7 +867,7 @@ namespace SensorMonitor.ViewModels
             this.WeightModel.Axes.Add(new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
-                StringFormat = "dd.MM HH:mm"
+                StringFormat = "HH:mm"
             });
             this.WeightModel.Axes.Add(new LinearAxis
             {
@@ -897,22 +1015,34 @@ namespace SensorMonitor.ViewModels
                 AddPointToBoth(TemperatureModel, TemperatureModelCommon, DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Temperature[i], i);
                 var s1 = (LineSeries)TemperatureModelMain.Series[i];
                 s1.Points.Add(new DataPoint(DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Temperature[i]));
-            }
-            this.TemperatureModel.InvalidatePlot(true);
-            TemperatureModelCommon.InvalidatePlot(true);
-            TemperatureModelMain.InvalidatePlot(true);
+            }           
 
             for (int i = 0; i < _PressureSeries.Length; i++)
             {
                 // _PressureSeries[i].Points.Add(new DataPoint(DateTimeAxis.ToDouble(DateTime.Now),_plcConnectionService.Pressure[i] ));
                 AddPointToBoth(PressureModel, PressureModelCommon, DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Pressure[i], i);
 
-            }
-            this.PressureModel.InvalidatePlot(true);
-            this.PressureModelCommon.InvalidatePlot(true);
+            }            
 
             AddPointToBoth(WeightModel, WeightModelCommon, DateTimeAxis.ToDouble(DateTime.Now), _plcConnectionService.Weight, 0);
 
+            var annotationText = CreateAnnotationText(DegassingIsChecked, SaturationIsChecked, HardeningIsChecked, CycleTime.ToString(@"hh\:mm\:ss") + " ");
+            if (annotationText != null)
+            {
+                AddAnnotation(TemperatureModel, DateTimeAxis.ToDouble(DateTime.Now), annotationText);
+                AddAnnotation(TemperatureModelCommon, DateTimeAxis.ToDouble(DateTime.Now), annotationText);
+                AddAnnotation(TemperatureModelMain, DateTimeAxis.ToDouble(DateTime.Now), annotationText);
+                AddAnnotation(PressureModel, DateTimeAxis.ToDouble(DateTime.Now), annotationText);
+                AddAnnotation(PressureModelCommon, DateTimeAxis.ToDouble(DateTime.Now), annotationText);
+                AddAnnotation(WeightModel, DateTimeAxis.ToDouble(DateTime.Now), annotationText);
+                AddAnnotation(WeightModelCommon, DateTimeAxis.ToDouble(DateTime.Now), annotationText);
+            }
+
+            this.TemperatureModel.InvalidatePlot(true);
+            TemperatureModelCommon.InvalidatePlot(true);
+            TemperatureModelMain.InvalidatePlot(true);
+            this.PressureModel.InvalidatePlot(true);
+            this.PressureModelCommon.InvalidatePlot(true);
             this.WeightModel.InvalidatePlot(true);
             this.WeightModelCommon.InvalidatePlot(true);
         }
@@ -922,7 +1052,7 @@ namespace SensorMonitor.ViewModels
             _dataBaseService.SavePomiar(new DataBaseService.Pomiar
             {
                 Data = DateTime.Now,
-                TimeSinceStart = (DateTime.Now - _startTime).ToString(@"mm\:ss"),
+                TimeSinceStart = (DateTime.Now - _startTime).ToString(@"hh\:mm\:ss"),
                 Temp1 = (float)Math.Round(_plcConnectionService.Temperature[0], 1),
                 Temp2 = (float)Math.Round(_plcConnectionService.Temperature[1], 1),
                 Temp3 = (float)Math.Round(_plcConnectionService.Temperature[2], 1),
