@@ -251,30 +251,6 @@ namespace SensorMonitor.ViewModels
             get { return BuildInformation.BuildAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm"); }
         }
 
-
-        
-        //public void OnClickDegassing(object obj)
-        //{
-        //    if (!DegassingInProgress)
-        //    {
-        //        var itemsToSend = new List<(string nodeId, object value)>
-        //    {
-        //     (_settings.NodeIds.DegassingStart, true),
-        //     (_settings.NodeIds.DegassingTime, _DegassingTime),
-        //     };
-        //        _plcConnectionService.WriteData(itemsToSend);
-        //    }
-        //    else
-        //    {
-        //        var itemsToSend = new List<(string nodeId, object value)>
-        //    {
-        //     (_settings.NodeIds.DegassingStart, false),
-        //     };
-        //        _plcConnectionService.WriteData(itemsToSend);
-        //    }
-        //    DegassingInProgress = !DegassingInProgress;
-        //}
-
         private bool ButtonTogglerEnabled = true;
 
         public bool DegassingIsChecked
@@ -307,12 +283,7 @@ namespace SensorMonitor.ViewModels
             set
             {
                 _saturationIsChecked = value;
-                OnPropertyChanged();
-
-             //   DegassingButtonEnabled = !value;
-              //  if (!HardeningIsChecked) { HardeningButtonEnabled = value; };
-              //  if (value) { DegassingIsChecked = false; }
-              //  if (!value) { SaturationButtonEnabled = false; }
+                OnPropertyChanged();           
               
                 var itemsToSend = new List<(string nodeId, object value)> //przesłanie stanu nasycenia do PLC
                         {
@@ -334,12 +305,6 @@ namespace SensorMonitor.ViewModels
             {
                 _utwardzanieIsChecked = value;
                 OnPropertyChanged();
-
-             //   SaturationButtonEnabled = !value;
-              //  DegassingButtonEnabled = !value;
-              //  if (value) { SaturationIsChecked = false; }
-              //  if (!value) { HardeningButtonEnabled = false; }
-
                 var itemsToSend = new List<(string nodeId, object value)> //przesłanie stanu nasycenia do PLC
                         {
                          (_settings.NodeIds.HardeningActive, value),
@@ -364,8 +329,6 @@ namespace SensorMonitor.ViewModels
            if (HardeningIsChecked) { SaturationIsChecked = false; }
             ButtonTogglerEnabled = true;
         }
-
-
 
 
         public MainViewModel(PLCConnectionService _PLCConnectionService, DataBaseService Data, IOptionsMonitor<AppSettings> options)
@@ -609,31 +572,7 @@ namespace SensorMonitor.ViewModels
             var s2 = (LineSeries)clone.Series[SerieNumber];
             s1.Points.Add(p);
             s2.Points.Add(new DataPoint(x, y));
-            //if (DegassingIsChecked)
-            //{
-            //    var Annotation1 = new LineAnnotation
-            //    {
-            //        Type = LineAnnotationType.Vertical,
-            //        X = x,
-            //        MinimumX = double.NegativeInfinity,
-            //        MaximumX = double.PositiveInfinity,
-            //        MinimumY = double.NegativeInfinity,
-            //        MaximumY = double.PositiveInfinity,
-            //        Color = OxyColors.Green,
-            //        StrokeThickness = 2,
-
-            //        Text = "Załączono odgazowanie",
-            //        TextColor = OxyColors.Red,
-            //        TextOrientation = AnnotationTextOrientation.Vertical,
-            //      //  TextHorizontalAlignment = HorizontalAlignment.Left,
-            //       // TextVerticalAlignment = VerticalAlignment.Top
-            //    };
-
-            //    var Annotation2 = Annotation1.DeepClone();
-
-            //    original.Annotations.Add(Annotation1);
-            //    clone.Annotations.Add(Annotation2);
-            //}                    
+            
         }
 
         private  void AddAnnotation (PlotModel model, double x, string text)
@@ -989,8 +928,8 @@ namespace SensorMonitor.ViewModels
         {
             try
             {
-                Directory.CreateDirectory(@"C:\ErrorsLog");
-                string fileName = @"C:\ErrorsLog\" + $"AlarmsAndWarnings_{DateTime.Now:yyyyMM}.txt";
+                Directory.CreateDirectory(_settings.ReportsPath + @"\Errors Log");
+                string fileName = _settings.ReportsPath + @"\Errors Log\" + $"AlarmsAndWarnings_{DateTime.Now:yyyyMM}.txt";
                 File.AppendAllText(fileName, _textLine + Environment.NewLine);
             }
             catch
