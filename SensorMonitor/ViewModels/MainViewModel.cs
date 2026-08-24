@@ -138,18 +138,7 @@ namespace SensorMonitor.ViewModels
                 CommandManager.InvalidateRequerySuggested();// Powiadom WPF, że CanExecute mogło się zmienić
             }
         }
-
-
-        //public bool DegassingInProgress
-        //{
-        //    get => _DegassingInProgress;
-        //    set
-        //    {
-        //        _DegassingInProgress = value;
-        //        OnPropertyChanged();
-        //    }
-        //}
-
+    
         public string CycleDurationText
         {
             get { return _CycleDurationText; }
@@ -259,20 +248,18 @@ namespace SensorMonitor.ViewModels
             set
             {
                 _degassingIsChecked = value;
-                OnPropertyChanged();             
-               // if (!SaturationIsChecked) { SaturationButtonEnabled = value; }
-                
+                OnPropertyChanged();   
 
                 var itemsToSend = new List<(string nodeId, object value)> //przesłanie stanu nasycenia do PLC
                         {
                          (_settings.NodeIds.DegassingStart, value),
                          (_settings.NodeIds.DegassingTime, _DegassingTime),
                         };
-                _plcConnectionService.WriteData(itemsToSend);
+                _plcConnectionService.WriteData(itemsToSend);          
 
               if (ButtonTogglerEnabled)
               {
-                  ButtonToggler();
+                  ButtonToggler("DegassingIsChecked");
               }
             }
         }
@@ -293,7 +280,7 @@ namespace SensorMonitor.ViewModels
 
                 if (ButtonTogglerEnabled)
                 {
-                    ButtonToggler();
+                    ButtonToggler("SaturationIsChecked");
                 }
             }
         }
@@ -309,24 +296,28 @@ namespace SensorMonitor.ViewModels
                         {
                          (_settings.NodeIds.HardeningActive, value),
                         };
-                _plcConnectionService.WriteData(itemsToSend);
-               
+                _plcConnectionService.WriteData(itemsToSend);               
+
                 if (ButtonTogglerEnabled)
                 {
-                    ButtonToggler();
+                    ButtonToggler("HardeningIsChecked");
                 }
             }
         }
 
-        private void ButtonToggler()
+        private void ButtonToggler(string _caller)
             {
                 ButtonTogglerEnabled = false;
-                DegassingButtonEnabled = !SaturationIsChecked;
-                SaturationButtonEnabled = (DegassingIsChecked || SaturationIsChecked)& !HardeningIsChecked;
-                HardeningButtonEnabled = SaturationIsChecked || HardeningIsChecked;
+            //  DegassingButtonEnabled = !SaturationIsChecked;
+            // SaturationButtonEnabled = (DegassingIsChecked || SaturationIsChecked)& !HardeningIsChecked;
+            //  HardeningButtonEnabled = SaturationIsChecked || HardeningIsChecked;
 
-           if (SaturationIsChecked) {DegassingIsChecked = false; }
-           if (HardeningIsChecked) { SaturationIsChecked = false; }
+            // if (SaturationIsChecked) {DegassingIsChecked = false; }
+            //  if (HardeningIsChecked) { SaturationIsChecked = false; }
+            if (_caller == "DegassingIsChecked" && DegassingIsChecked) { SaturationIsChecked = false; HardeningIsChecked = false; goto End; }
+            if (_caller == "SaturationIsChecked" && SaturationIsChecked) { DegassingIsChecked = false; HardeningIsChecked = false; goto End; }
+            if (_caller == "HardeningIsChecked" && HardeningIsChecked) { DegassingIsChecked = false; SaturationIsChecked = false; goto End; }
+        End:
             ButtonTogglerEnabled = true;
         }
 
@@ -399,7 +390,7 @@ namespace SensorMonitor.ViewModels
 
             StartButtonEnabled = false;
             StopButtonEnabled = true;
-            DegassingButtonEnabled = true;
+           // DegassingButtonEnabled = true;
             if (_DBWriteActive)
                 return;
             _oldWeight = 0; // Reset zmiany wagi przy każdym rozpoczęciu pomiaru
@@ -444,13 +435,13 @@ namespace SensorMonitor.ViewModels
                 StartButtonEnabled = true;
                 StopButtonEnabled = false;
                 
-                DegassingIsChecked = false;
-                SaturationIsChecked = false;
-                HardeningIsChecked = false;
+              //  DegassingIsChecked = false;
+              //  SaturationIsChecked = false;
+              //  HardeningIsChecked = false;
                 
-                SaturationButtonEnabled = false;
-                HardeningButtonEnabled = false;
-                DegassingButtonEnabled = false;
+               // SaturationButtonEnabled = false;
+              //  HardeningButtonEnabled = false;
+              //  DegassingButtonEnabled = false;
                 if (!_DBWriteActive) return;
                 _DBWriteActive = false;
                 _timer.Stop();
@@ -621,8 +612,6 @@ namespace SensorMonitor.ViewModels
             hardeningActiveLastState = _hardeningActive;
             return annotationText;
         }
-
-
 
 
         public void ResetPlotAndClearPoints(PlotModel model, bool invalidate)
@@ -833,11 +822,17 @@ namespace SensorMonitor.ViewModels
             {
                 StartButtonEnabled = true;
                 StopButtonEnabled = false;
+                DegassingButtonEnabled = true;
+                SaturationButtonEnabled = true;
+                HardeningButtonEnabled = true;
             }
             else
             {
                 StartButtonEnabled = false;
                 StopButtonEnabled = false;
+                DegassingButtonEnabled = false;
+                SaturationButtonEnabled = false;
+                HardeningButtonEnabled = false;
             }
         }
 

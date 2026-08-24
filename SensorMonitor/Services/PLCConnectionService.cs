@@ -229,8 +229,20 @@ namespace SensorMonitor.Services
             {
                 NodesToWrite = writeValues.ToArray()
             };
-            var response = await channel.WriteAsync(request);
-        }
+          try
+            {
+                var response = await channel.WriteAsync(request);
+            }
+            catch (Exception ex)
+            {
+             MessageBox.Show($"Problem z zapisem danych: {ex.Message}");
+
+                //  ConnectionStatusChanged?.Invoke($"Problem z zapisem danych: {ex.Message}");
+                //  await channel!.AbortAsync(); //???????????????????
+                //   await channel!.CloseAsync();
+                //   await Connect();
+            }
+         }
 
         public async void ConnectPLC()
         {

@@ -11,9 +11,9 @@
     <StartupObject></StartupObject>
 	<Nullable>disable</Nullable>
 	<IncrementVersionOnBuild>1.yyyy.Mdd.Hmm</IncrementVersionOnBuild>
-	<AssemblyVersion>1.2.0.0</AssemblyVersion>
-	<FileVersion>1.2.0.0</FileVersion>
-	<Version>1.2.0.0</Version>
+	<AssemblyVersion>1.2.1.0</AssemblyVersion>
+	<FileVersion>1.2.1.0</FileVersion>
+	<Version>1.2.1.0</Version>
 	  <EnableInterceptors>true</EnableInterceptors>
 	  <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.Extensions.Configuration.Binder.SourceGeneration</InterceptorsNamespaces>
    </PropertyGroup>
@@ -30,13 +30,13 @@
 
   <ItemGroup>
     <PackageReference Include="DeepCloner" Version="0.10.4" />
-    <PackageReference Include="JsonFlatFileDataStore" Version="2.4.2" />
+    <PackageReference Include="JsonFlatFileDataStore" Version="2.4.3" />
     <PackageReference Include="LinkDotNet.BuildInformation" Version="2.1.5" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
     <PackageReference Include="Material.Icons.WPF" Version="3.0.2" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
 	 
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
 	 
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
 	 
